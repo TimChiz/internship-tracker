@@ -1,5 +1,5 @@
 # internship-tracker
-A full-stack internship application tracker for undergraduate students featuring priority deadline sorting, CV version management with custom exports, and social progress sharing. Made by the best group ever!
+A full-stack internship application tracker for undergraduate students featuring priority deadline sorting, and social progress sharing. Made by the best group ever!
 
 ## backend schema:
 ```
@@ -10,9 +10,8 @@ app/
     applications.py    # CRUD, sorting/grouping, deadline math
     social.py          # friend requests, sharing permissions
     stats.py           # weekly counts, streak, leaderboard, gang score
-    cvs.py             # upload/serve/delete CV files
   routes/              # Flask blueprints: thin, parse request → call service → render
-    auth.py, home.py, applications.py, cvs.py, friends.py
+    auth.py, home.py, applications.py, friends.py
   templates/
 tests/                 # unittest, mostly against services/
 Dockerfile, docker-compose.yml, .github/workflows/ci.yml
@@ -22,8 +21,6 @@ Dockerfile, docker-compose.yml, .github/workflows/ci.yml
 ```mermaid
 erDiagram
     users ||--o{ applications : owns
-    users ||--o{ cvs : owns
-    cvs |o--o{ applications : "submitted with"
     users ||--o{ friend_requests : sends
     users ||--o{ friend_requests : receives
     users ||--o{ share_grants : "shares (owner)"
@@ -55,25 +52,12 @@ erDiagram
 | `deadline` | date | nullable | |
 | `is_rolling` | boolean | not null, default false | |
 | `notes` | text | not null, default `''` | Never shown to friends |
-| `cv_id` | integer | FK → cvs.id, nullable, on delete set null | Never shown to friends |
 | `applied_at` | timestamp | nullable | Set the first time status becomes `applied`; never cleared. Drives stats, streak, leaderboard |
 | `created_at` | timestamp | not null | |
 | `updated_at` | timestamp | not null | Sorts the Closed section |
  
 Indexes: `(user_id, status, deadline)` for the tracker, and `(user_id, applied_at)` for stats and the streak.
  
-## cvs
- 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| `id` | integer | PK | |
-| `user_id` | integer | FK → users.id, not null, on delete cascade | |
-| `label` | varchar(80) | not null | `General SWE CV` |
-| `filename` | varchar(255) | not null | Original name, for display only |
-| `stored_path` | varchar(255) | unique, not null | Generated name on the uploads volume (e.g. a UUID + `.pdf`); never the user's filename |
-| `uploaded_at` | timestamp | not null | |
- 
-The PDF itself lives on disk in a Docker volume. The database only stores where it is.
  
 ## friend_requests
  
