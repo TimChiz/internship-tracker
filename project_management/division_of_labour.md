@@ -1,4 +1,4 @@
-# DIVISION OF LABOUR
+# OLD  DIVISION OF LABOUR (IGNORE)
 
 Our team uses a **Vertical Feature Ownership** structure. You will build and own your assigned feature end-to-end (full-stack), writing both the backend logic and the frontend components for it.
 
