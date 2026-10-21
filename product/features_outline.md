@@ -17,7 +17,7 @@ Also maybe a column for which CV was submitted, openable as a file in the CV Man
 
 ## Page 3: CV Manager
 
-![CV Manager Page Screenshot](cv_manager_page.png)
+![CV Manager Page Screenshot](cv_manager_page.png) (may implement this later)
 
 Folder with different versions of CV
 Ability to import/add/drag and drop CV
