@@ -16,3 +16,12 @@ Phase 7
     - friends and sharing
 Phase 8
     - stats: home, streak, leaderboard etc.
+Phase 9 
+    - deployment check: run on a diff machine using only the README
+
+MVP1 - Nov 4
+    - Test and implement feedback
+MVP2 - Nov 16
+    - Test and implement feedback
+MVP3 - Nov 30 
+    
