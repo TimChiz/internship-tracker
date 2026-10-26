@@ -17,7 +17,7 @@ The MVP needs three tables: `users`, `applications` and `friend_requests`.
 | --- | --- | --- | --- |
 | `id` | integer | PK |  |
 | `user_id` | integer | FK → users.id, not null, on delete cascade |  |
-| `company` | varchar(120) | not null, default `''` | Blank when added from a bare link |
+| `company` | varchar(120) | not null, default `''` | Blank when added from a  link, user will set up later |
 | `role` | varchar(120) | not null, default `''` |  |
 | `url` | varchar(2048) | nullable |  |
 | `status` | varchar(20) | not null, default `'to_do'`, `CHECK` in the six statuses | `to_do`, `in_progress`, `applied`, `interviewing`, `offer`, `rejected` |
