@@ -49,7 +49,7 @@ The page uses three stepped bands. The first edge sits on the header line, the s
 | Urgent | #C9301A | #FF9478 |
 | Sun or moon | #E5491F | #FFD98A |
 
-Text colors on panels pass WCAG AA contrast (4.5:1 or higher) in both modes, and main and secondary text also pass on every band. The sun or moon can double as the day/night switch.
+Text colors on panels pass WCAG AA contrast (4.5:1 or higher) in both modes, and main and secondary text also pass on every band. The sun or moon is the day/night switch. It's manual, and the choice carries over between pages.
 
 ### Tag colors: suggestions
 
@@ -70,11 +70,11 @@ Avoid yellow, which blends into the gold page, and purple, which we ruled out. T
 
 | Use | Font | Size |
 | --- | --- | --- |
-| Titles and labels | Pixelbasel | Multiples of 16px, such as 16, 32 or 48px |
+| Titles | Pixelbasel | Multiples of 16px, such as 32, 48 or 64px |
 | Buttons | Chava | 14–16px |
 | Everything else | DM Sans | 14px minimum |
 
-Each font has one job. Pixelbasel's pixels stay crisp at multiples of 16px, and it comes in one thin weight, so don't fake bold. It has no arrows, so the arrow in "Open ↗" should be an icon. Chava only has capitals, so all button labels appear in caps.
+Each font has one job. Pixelbasel's pixels stay crisp at multiples of 16px, and it comes in one thin weight, so don't fake bold. It's too thin for small text, so field labels use DM Sans. It has no arrows, so the arrow in "Open ↗" should be an icon. Chava only has capitals, so all button labels appear in caps.
 
 ## Juice
 
@@ -101,7 +101,7 @@ Rules: it can be skipped, it takes under a minute, and the fake application neve
 
 ## Open questions
 
-- [ ] Can we commit Chava to our public repo? Its license doesn't allow publishing the font without the author's written permission. If we can't get that, Pixelbasel takes over the buttons at a larger size.
 - [ ] What are the final tag colors? The roadmap's Yellow = Interviewing, Green = Offer, Red = Rejected needs to match them.
 - [ ] Does night mode also follow the device setting, or is it manual only?
+    - [ ] Let's make it manual only
 - [ ] Who draws the 8 rats, and how long will that take?
