@@ -1,0 +1,37 @@
+{# Shared page for the sign-on screens: the desert stage on the left and the form card on the right. #}
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rat Race — {% block page_title %}{% endblock %}</title>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="stage">
+      {% include "components/desert_scene.html" %}
+      {% include "components/theme_toggle.html" %}
+      <div class="brand">
+        <img class="brand-logo" src="{{ url_for('static', filename='images/rat-race-logo.png') }}" width="800" height="800" alt="Rat Race logo">
+        <p class="brand-wordmark">Rat Race</p>
+      </div>
+      <div class="finish-line" aria-hidden="true"></div>
+    </div>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="auth-heading">
+          <h1>{% block heading %}{% endblock %}</h1>
+          {% block subhead %}{% endblock %}
+        </div>
+        {% block form %}{% endblock %}
+        <p class="auth-footer">{% block footer %}{% endblock %}</p>
+      </div>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

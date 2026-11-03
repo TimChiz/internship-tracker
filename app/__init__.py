@@ -32,4 +32,7 @@ def create_app(test_config=None):
     from .routes.home import home
     app.register_blueprint(home)
 
+    from .routes.auth import auth
+    app.register_blueprint(auth)
+
     return app

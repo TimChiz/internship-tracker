@@ -1,0 +1,27 @@
+{# The /login screen. #}
+{% extends "auth/layout.html" %}
+
+{% block page_title %}Log in{% endblock %}
+{% block heading %}Welcome back{% endblock %}
+{% block subhead %}<p>Your rat is waiting at the starting line.</p>{% endblock %}
+
+{% block form %}
+<form id="auth-form" class="auth-form" method="post">
+  <div class="field">
+    <label class="field-label" for="login-email">Email</label>
+    <input id="login-email" class="rr-input" type="email" name="email" autocomplete="email" placeholder="you@university.edu">
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="login-password">Password</label>
+    <div class="password-field">
+      <input id="login-password" class="rr-input rr-input-password" type="password" name="password" autocomplete="current-password" placeholder="Your password">
+      {% include "components/password_toggle.html" %}
+    </div>
+  </div>
+
+  <button type="submit" class="rr-btn">LOG IN</button>
+</form>
+{% endblock %}
+
+{% block footer %}New to Rat Race? <a href="{{ url_for('auth.register') }}">Create an account</a>{% endblock %}

@@ -1,0 +1,310 @@
+/* Styles for the log in and create account screens. Colors and fonts come from tokens.css. */
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--rr-ink);
+}
+
+a:hover {
+  color: var(--rr-ink-2);
+}
+
+/* Page: a full-height row that stacks when the window gets narrow */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--rr-font-body);
+  font-size: 16px;
+  color: var(--rr-ink);
+  background: var(--rr-band-lower);
+}
+
+/* Left side: the stage. The large bottom padding keeps the logo above the scenery. */
+
+.stage {
+  position: relative;
+  flex: 1 1 560px;
+  box-sizing: border-box;
+  padding: 16px 72px 248px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--rr-band-header);
+}
+
+.brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The file is larger than it's ever shown, so skip image-rendering: pixelated, which would drop detail when shrinking it. */
+.brand-logo {
+  display: block;
+  width: min(400px, 40vh);
+  height: auto;
+}
+
+.brand-wordmark {
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 400;
+  color: var(--rr-ink);
+  text-align: center;
+}
+
+.finish-line {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 24px;
+  background-color: var(--rr-panel);
+  background-image: conic-gradient(var(--rr-ink) 25%, transparent 0 50%, var(--rr-ink) 0 75%, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* Sun and moon: the day/night switch */
+
+.rr-sun {
+  position: absolute;
+  top: 40px;
+  right: 64px;
+  z-index: 2;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  fill: var(--rr-sun);
+}
+
+.rr-sun:hover {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rr-sun:hover {
+    transform: none;
+  }
+}
+
+.moon-art {
+  display: none;
+}
+
+:root[data-theme="night"] .sun-art {
+  display: none;
+}
+
+:root[data-theme="night"] .moon-art {
+  display: block;
+}
+
+/*
+ * Desert scene: always 1440x960 so its pixels stay crisp. The stage crops it.
+ * It sits 56px below the stage, cropping only empty sand, so short screens have room for the logo.
+ */
+
+.desert-scene {
+  position: absolute;
+  left: 50%;
+  bottom: -56px;
+  margin-left: -720px;
+  display: block;
+  pointer-events: none;
+}
+
+.s-a { fill: var(--rr-band-header); }
+.s-b { fill: var(--rr-band-middle); }
+.s-c { fill: var(--rr-band-lower); }
+.st-a { fill: none; stroke-width: 1; stroke-dasharray: 1 1; stroke: var(--rr-band-header); }
+.st-b { fill: none; stroke-width: 1; stroke-dasharray: 1 1; stroke: var(--rr-band-middle); }
+.s-cloud { fill: var(--rr-cloud); }
+.s-cloud-edge { fill: var(--rr-cloud-edge); }
+.s-star { fill: var(--rr-star); }
+.s-mesa { fill: var(--rr-mesa); }
+.s-rim { fill: var(--rr-mesa-rim); }
+.s-hill { fill: var(--rr-hill); }
+.s-sand { fill: var(--rr-sand); }
+.s-shade { fill: var(--rr-sand-shade); }
+.s-road { fill: var(--rr-road); }
+.s-edge { fill: var(--rr-road-edge); }
+.s-dash { fill: var(--rr-road-dash); }
+.s-cactus { fill: var(--rr-cactus); }
+
+/* Right side: the form card. Its spacing is tight so the whole card fits without scrolling on a 1280x720 screen. */
+
+.auth-main {
+  flex: 1 1 520px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 8px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+  padding: 28px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--rr-panel);
+  border: 3px solid var(--rr-ink);
+  box-shadow: 8px 8px 0 var(--rr-ink);
+}
+
+.auth-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-heading h1 {
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 48px;
+  line-height: 1.1;
+  font-weight: 400;
+}
+
+.auth-heading p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--rr-ink-2);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-footer {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--rr-ink-2);
+}
+
+.auth-footer a {
+  font-weight: 700;
+}
+
+/* Form fields */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.field-hint {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--rr-ink-2);
+}
+
+.rr-input {
+  width: 100%;
+  height: 52px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--rr-ink);
+  background: var(--rr-field);
+  border: 3px solid var(--rr-ink);
+  border-radius: 0;
+}
+
+.rr-input::placeholder {
+  color: var(--rr-ink-2);
+}
+
+/* Password field: extra room on the right for the eye button */
+
+.password-field {
+  position: relative;
+}
+
+.rr-input-password {
+  padding-right: 56px;
+}
+
+.rr-icon-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  fill: var(--rr-ink);
+}
+
+/* Primary button: presses into its shadow when clicked */
+
+.rr-btn {
+  width: 100%;
+  height: 56px;
+  font-family: var(--rr-font-button);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--rr-action-text);
+  background: var(--rr-action);
+  border: 3px solid var(--rr-ink);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--rr-action-shadow);
+  cursor: pointer;
+}
+
+.rr-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* Keyboard focus */
+
+.rr-input:focus,
+.rr-btn:focus-visible,
+.rr-icon-btn:focus-visible,
+.rr-sun:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 3px;
+}
