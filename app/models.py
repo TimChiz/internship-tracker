@@ -1,3 +1,4 @@
+from flask_login import UserMixin
 from . import db
 from .clock import utc_now
 from .constants import STATUS_OPTIONS
@@ -5,7 +6,7 @@ from .constants import STATUS_OPTIONS
 #models.py is like the .sql files (CREATE TABLE etc) that we wrote in class, but written in Python - it creates the tables in sql for us 
 #each class is one table, each db.Column is one column in this table
 
-class User(db.Model):
+class User(UserMixin, db.Model):  
     """
     One person with an account
     """
