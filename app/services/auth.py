@@ -1,11 +1,18 @@
 """Sign-up and Name Your Rat validation rules (services layer).
 
-Services know the rules and never import `request`. The validators in
-this file are pure functions; other auth services (register_user,
-claim_username in issue #15) will read and write the database.
+Services know the rules and never import `request`. The validators are
+pure functions; register_user, authenticate and claim_username read and
+write the database through app/repositories/users.py.
 """
 
 import string
+
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from app import db
+from app.models import User
+from app.repositories.users import UserRepository, add_user
+from app.services.errors import AuthError
 
 EMAIL_MAX_LENGTH = 255
 PASSWORD_MIN_LENGTH = 8
@@ -66,6 +73,57 @@ def validate_username(raw: str) -> list[str]:
         errors.append("Use only lowercase letters, digits and _.")
 
     return errors
+
+
+def register_user(email: str, password: str) -> User:
+    """Create a new account and return it.
+
+    The email is normalized first, so "Klara@X.com" and "klara@x.com" count
+    as the same account. The password is stored only as a hash.
+    Raises AuthError if the email is already registered.
+    """
+    email = normalize_email(email)
+
+    if UserRepository.by_email(email) is not None:
+        raise AuthError("An account with that email already exists.")
+
+    user = User(email=email, password_hash=generate_password_hash(password))
+    add_user(user)
+    db.session.commit()
+    return user
+
+
+def authenticate(email: str, password: str) -> User | None:
+    """Return the user if the email and password match, otherwise None.
+
+    Unknown email and wrong password both return None, so the login page
+    can't reveal which accounts exist.
+    """
+    user = UserRepository.by_email(normalize_email(email))
+
+    if user is None or not check_password_hash(user.password_hash, password):
+        return None
+    return user
+
+
+def claim_username(user: User, raw: str) -> list[str]:
+    """Give the user a Name Your Rat username and return any errors.
+
+    An empty list means the name was saved. The name is validated first;
+    if it's taken (by someone else, ignoring case) nothing is saved.
+    """
+    errors = validate_username(raw)
+    if errors:
+        return errors
+
+    username = raw.strip()
+    existing = UserRepository.by_username(username)
+    if existing is not None and existing.id != user.id:
+        return ["That name is taken."]
+
+    user.username = username
+    db.session.commit()
+    return []
 
 
 def _is_valid_email(email: str) -> bool:
