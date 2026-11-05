@@ -1,7 +1,8 @@
 """Sign-up and Name Your Rat validation rules (services layer).
 
-Services know the rules. They never import `request` and never touch
-the database.
+Services know the rules and never import `request`. The validators in
+this file are pure functions; other auth services (register_user,
+claim_username in issue #15) will read and write the database.
 """
 
 import string
@@ -11,7 +12,7 @@ PASSWORD_MIN_LENGTH = 8
 PASSWORD_MAX_LENGTH = 128
 USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 16
-USERNAME_ALLOWED_CHARACTERS = string.ascii_letters + string.digits + "_"
+USERNAME_ALLOWED_CHARACTERS = string.ascii_lowercase + string.digits + "_"
 
 
 def normalize_email(raw: str) -> str:
@@ -48,9 +49,9 @@ def validate_signup(email: str, password: str, confirm: str) -> list[str]:
 def validate_username(raw: str) -> list[str]:
     """Check a Name Your Rat username and return every error found.
 
-    Rules: 3-16 characters after stripping spaces, only letters, digits and _.
-    Whether the name is already taken is checked later, in claim_username
-    (issue #15).
+    Rules: 3-16 characters after stripping spaces, only lowercase letters,
+    digits and _. Whether the name is already taken is checked later, in
+    claim_username (issue #15).
     """
     username = raw.strip()
     errors = []
@@ -62,7 +63,7 @@ def validate_username(raw: str) -> list[str]:
         )
 
     if not all(character in USERNAME_ALLOWED_CHARACTERS for character in username):
-        errors.append("Use only letters, digits and _.")
+        errors.append("Use only lowercase letters, digits and _.")
 
     return errors
 
