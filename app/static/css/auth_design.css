@@ -24,7 +24,10 @@ a:hover {
   background: var(--rr-band-lower);
 }
 
-/* Left side: the stage. The large bottom padding keeps the logo above the scenery. */
+/*
+ * Left side: the stage. The large bottom padding keeps the logo above the scenery.
+ * The logo and name sit at the bottom of that space, so "Rat Race" always lands on the palest band of the sky.
+ */
 
 .stage {
   position: relative;
@@ -34,7 +37,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   overflow: hidden;
   background: var(--rr-band-header);
 }
