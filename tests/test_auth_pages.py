@@ -37,6 +37,8 @@ class AuthPagesTest(unittest.TestCase):
             "Join the race",
             'aria-describedby="reg-password-hint"',
             "At least 8 characters.",
+            'name="email" autocomplete="email" placeholder="you@university.edu" required',
+            'required minlength="8"',
             "Confirm password",
             'name="confirm"',
             "CREATE ACCOUNT",

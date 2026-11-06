@@ -8,13 +8,13 @@
 <form id="auth-form" class="auth-form" method="post">
   <div class="field">
     <label class="field-label" for="reg-email">Email</label>
-    <input id="reg-email" class="rr-input" type="email" name="email" autocomplete="email" placeholder="you@university.edu">
+    <input id="reg-email" class="rr-input" type="email" name="email" autocomplete="email" placeholder="you@university.edu" required>
   </div>
 
   <div class="field">
     <label class="field-label" for="reg-password">Password</label>
     <div class="password-field">
-      <input id="reg-password" class="rr-input rr-input-password" type="password" name="password" autocomplete="new-password" placeholder="Create a password" aria-describedby="reg-password-hint">
+      <input id="reg-password" class="rr-input rr-input-password" type="password" name="password" autocomplete="new-password" placeholder="Create a password" aria-describedby="reg-password-hint" required minlength="8">
       {% include "components/password_toggle.html" %}
     </div>
     <p id="reg-password-hint" class="field-hint">At least 8 characters.</p>
