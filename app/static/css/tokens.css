@@ -1,0 +1,95 @@
+/*
+ * Rat Race design tokens: fonts and colors.
+ * Values come from the design doc, which is at frontend-design/design_doc.md in this repo.
+ * Read it for why each color and font was chosen, and for what each one is used for.
+ */
+
+/* Fonts */
+
+@font-face {
+  font-family: "Pixelbasel";
+  src: url("../fonts/Pixelbasel.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chava";
+  src: url("../fonts/Chava-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* One variable font file covers every DM Sans weight. */
+@font-face {
+  font-family: "DM Sans";
+  src: url("../fonts/DMSans-Variable.ttf") format("truetype");
+  font-weight: 100 1000;
+  font-display: swap;
+}
+
+:root {
+  --rr-font-title: "Pixelbasel", monospace;
+  --rr-font-button: "Chava", sans-serif;
+  --rr-font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Day colors (the default) */
+
+:root {
+  --rr-band-header: #F7C35F;
+  --rr-band-middle: #FBD88E;
+  --rr-band-lower: #FEEDC6;
+  --rr-panel: #FFF6E0;
+  --rr-ink: #2B1B12;
+  --rr-ink-2: #67503F;
+  --rr-action: #2B1B12;
+  --rr-action-text: #FFF6E0;
+  --rr-action-shadow: #F7C35F;
+  --rr-urgent: #C9301A;
+  --rr-sun: #E5491F;
+  --rr-field: #FFFFFF;
+
+  /* Desert scene only */
+  --rr-cloud: #FBD88E;
+  --rr-cloud-edge: #FFF6E0;
+  --rr-star: transparent;
+  --rr-mesa: #F0A35E;
+  --rr-mesa-rim: #F7C35F;
+  --rr-hill: #C8703E;
+  --rr-sand: #F7C35F;
+  --rr-sand-shade: #E9A94B;
+  --rr-road: #67503F;
+  --rr-road-edge: #2B1B12;
+  --rr-road-dash: #FEEDC6;
+  --rr-cactus: #2B1B12;
+}
+
+/* Night colors */
+
+:root[data-theme="night"] {
+  --rr-band-header: #0B1C3D;
+  --rr-band-middle: #0E2247;
+  --rr-band-lower: #122A55;
+  --rr-panel: #1A2F55;
+  --rr-ink: #FFF3D9;
+  --rr-ink-2: #C9C2B0;
+  --rr-action: #FFF3D9;
+  --rr-action-text: #1A2F55;
+  --rr-action-shadow: #FFD98A;
+  --rr-urgent: #FF9478;
+  --rr-sun: #FFD98A;
+  --rr-field: #122A55;
+
+  /* Desert scene only */
+  --rr-cloud: #1A2F55;
+  --rr-cloud-edge: #2E4A7C;
+  --rr-star: #FFD98A;
+  --rr-mesa: #081530;
+  --rr-mesa-rim: #24406E;
+  --rr-hill: #0A1733;
+  --rr-sand: #1A2F55;
+  --rr-sand-shade: #122A55;
+  --rr-road: #0B1C3D;
+  --rr-road-edge: #C9C2B0;
+  --rr-road-dash: #FFD98A;
+  --rr-cactus: #030A1C;
+}
