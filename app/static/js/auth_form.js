@@ -1,7 +1,7 @@
 /**
- * Behavior for the log in and create account screens:
- * the day/night switch, the show/hide password buttons, and holding the form back until the auth backend exists.
- * Saving the day/night choice is handled by theme.js, which loads first, so its functions can be used here.
+ * Behavior for the log in and create account forms:
+ * the show/hide password buttons, and holding the form back until the auth backend exists.
+ * The day/night switch is handled by theme.js, which every page loads.
  *
  * New to JavaScript? Here's what you need for this file:
  * - Everything here runs in the visitor's browser, not on our Python server.
@@ -12,41 +12,6 @@
  * - addEventListener("click", someFunction) means "run someFunction whenever this is clicked".
  *   The function's name has no () after it, because the browser runs it later, not right now.
  */
-
-/**
- * Make the day/night switch's label say what clicking it will do next.
- */
-function updateThemeToggleLabel() {
-  const isNight = document.documentElement.dataset.theme === "night";
-  const label = isNight ? "Switch to day mode" : "Switch to night mode";
-  const themeToggle = document.getElementById("theme-toggle");
-
-  // aria-label is what screen readers announce. title is the tooltip shown on hover.
-  themeToggle.setAttribute("aria-label", label);
-  themeToggle.setAttribute("title", label);
-}
-
-/**
- * Show the saved day/night choice. This also covers the browser's Back button,
- * which can restore an old copy of a page from before the choice changed.
- */
-function applySavedTheme() {
-  document.documentElement.dataset.theme = readSavedTheme();
-  updateThemeToggleLabel();
-}
-
-/**
- * Switch the page between day and night, and remember the choice for other pages.
- */
-function toggleTheme() {
-  const root = document.documentElement;
-  const nextTheme = root.dataset.theme === "night" ? "day" : "night";
-
-  // Changing this attribute is all it takes to change the colors. The CSS does the rest.
-  root.dataset.theme = nextTheme;
-  saveTheme(nextTheme);
-  updateThemeToggleLabel();
-}
 
 /**
  * Show or hide the password next to the eye button, and swap the button's icon and label to match.
@@ -76,12 +41,7 @@ function holdFormSubmission(event) {
   event.preventDefault();
 }
 
-// Everything below runs once when the page loads. It sets the label and connects the functions above to the page.
-updateThemeToggleLabel();
-
-// "pageshow" happens whenever a page appears, including when someone returns with the Back button.
-window.addEventListener("pageshow", applySavedTheme);
-document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+// Everything below runs once when the page loads. It connects the functions above to the page.
 document.getElementById("auth-form").addEventListener("submit", holdFormSubmission);
 
 // querySelectorAll finds every matching tag. This loop works like "for button in buttons:" in Python.
