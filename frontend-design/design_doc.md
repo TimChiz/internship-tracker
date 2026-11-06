@@ -1,9 +1,6 @@
 # Rat Race Design Doc
 
 Nov 2, 2026 · Nokutenda Chimbetete
-
-This is a copy of the [live doc](https://claude.ai/artifact/1dN1Rd2y3DDzae11cAuPV3), which may be newer.
-
 ## The feeling
 
 Logging into Rat Race should feel like silly excitement. Applying for internships is depressing and serious, so the app brings the levity.
