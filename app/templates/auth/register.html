@@ -1,0 +1,35 @@
+{# The /register screen. #}
+{% extends "auth/layout.html" %}
+
+{% block page_title %}Create account{% endblock %}
+{% block heading %}Join the race{% endblock %}
+
+{% block form %}
+<form id="auth-form" class="auth-form" method="post">
+  <div class="field">
+    <label class="field-label" for="reg-email">Email</label>
+    <input id="reg-email" class="rr-input" type="email" name="email" autocomplete="email" placeholder="you@university.edu" required>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="reg-password">Password</label>
+    <div class="password-field">
+      <input id="reg-password" class="rr-input rr-input-password" type="password" name="password" autocomplete="new-password" placeholder="Create a password" aria-describedby="reg-password-hint" required minlength="8">
+      {% include "components/password_toggle.html" %}
+    </div>
+    <p id="reg-password-hint" class="field-hint">At least 8 characters.</p>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="reg-confirm">Confirm password</label>
+    <div class="password-field">
+      <input id="reg-confirm" class="rr-input rr-input-password" type="password" name="confirm" autocomplete="new-password" placeholder="Repeat your password">
+      {% include "components/password_toggle.html" %}
+    </div>
+  </div>
+
+  <button type="submit" class="rr-btn">CREATE ACCOUNT</button>
+</form>
+{% endblock %}
+
+{% block footer %}Already racing? <a href="{{ url_for('auth.login') }}">Log in</a>{% endblock %}

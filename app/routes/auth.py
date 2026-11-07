@@ -2,9 +2,20 @@
 
 from functools import wraps
 
-from flask import redirect
+from flask import redirect, Blueprint, render_template
 from flask_login import current_user
 
+auth = Blueprint("auth", __name__)
+
+@auth.route("/login")
+def login():
+    """Show the log in screen."""
+    return render_template("auth/login.html")
+
+@auth.route("/register")
+def register():
+    """Show the create account screen."""
+    return render_template("auth/register.html")
 
 def username_required(view):
     """Only show the page to a logged-in user who has picked a username.

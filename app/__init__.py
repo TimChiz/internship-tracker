@@ -49,7 +49,19 @@ def create_app(test_config=None):
         """
         return UserRepository.by_id(int(user_id))
 
+    from . import models
+    with app.app_context():
+        # Creates every table that doesn't exist yet. It never changes or deletes
+        # a table that already exists, which is why changing a table later means
+        # deleting the local database file.
+        db.create_all()
+    # create_all() needs to know WHICH app's database to use. app_context() says
+    # "for the lines inside this block, the current app is this one".
+    
     from .routes.home import home
     app.register_blueprint(home)
+
+    from .routes.auth import auth
+    app.register_blueprint(auth)
 
     return app
