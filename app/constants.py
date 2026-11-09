@@ -5,7 +5,7 @@ STATUS_OPTIONS = ("to_do", "in_progress", "applied", "interviewing", "offer", "r
 
 # "translation" of status options in code to what we want to show in the front end to the users
 STATUS_LABELS = {
-    "to_do": "To_do",
+    "to_do": "To-do",
     "in_progress": "In progress",
     "applied": "Applied",
     "interviewing": "Interviewing",

@@ -1,0 +1,446 @@
+/* Styles for the Applications page: the table and the Add popup. Colors and fonts come from tokens.css,
+   and inputs and buttons follow the same patterns as the auth pages (auth_design.css). */
+
+body {
+  margin: 0;
+  font-family: var(--rr-font-body);
+  font-size: 16px;
+  color: var(--rr-ink);
+  background: var(--rr-band-lower);
+}
+
+a {
+  color: var(--rr-ink);
+}
+
+a:hover {
+  color: var(--rr-ink-2);
+}
+
+.page-width {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.muted {
+  color: var(--rr-ink-2);
+}
+
+/* Hidden on screen, but still read out by screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The three stepped color bands from the design doc */
+
+.band-header {
+  background: var(--rr-band-header);
+  border-bottom: 3px solid var(--rr-ink);
+}
+
+.band-middle {
+  background: var(--rr-band-middle);
+}
+
+.band-lower {
+  padding: 24px 0 64px;
+  background: var(--rr-band-lower);
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.username {
+  margin: 0;
+  font-weight: 700;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.title-row h1 {
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 48px;
+  line-height: 1.1;
+  font-weight: 400;
+}
+
+/* Panels, like the auth card: cream, dark outline, hard shadow */
+
+.panel,
+.app-table {
+  background: var(--rr-panel);
+  border: 3px solid var(--rr-ink);
+  box-shadow: 6px 6px 0 var(--rr-ink);
+}
+
+.empty-panel {
+  padding: 32px;
+  text-align: center;
+}
+
+.empty-panel h2 {
+  margin: 0 0 8px;
+  font-family: var(--rr-font-title);
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.empty-panel p {
+  margin: 0;
+  color: var(--rr-ink-2);
+}
+
+/* The table. Narrow screens scroll it sideways instead of squashing the columns. */
+
+.table-wrap {
+  overflow-x: auto;
+  padding: 0 9px 9px 0;
+}
+
+.app-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.col-name { width: 30%; }
+.col-link { width: 10%; }
+.col-status { width: 15%; }
+.col-notes { width: 30%; }
+.col-deadline { width: 15%; }
+
+.app-table th,
+.app-table td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rr-band-middle);
+  overflow-wrap: anywhere;
+}
+
+/* The column names stay visible while scrolling a long table */
+.app-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rr-ink-2);
+  background: var(--rr-panel);
+  border-bottom: 3px solid var(--rr-ink);
+}
+
+.section-header th {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--rr-band-lower);
+}
+
+.app-table tbody tr:not(.section-header):hover {
+  background: var(--rr-band-lower);
+}
+
+.cell-name {
+  font-weight: 500;
+}
+
+.app-table a {
+  white-space: nowrap;
+}
+
+/* Long notes show their first two lines; the full text will be on the edit page */
+.notes {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 15px;
+  color: var(--rr-ink-2);
+}
+
+.deadline,
+.deadline-label {
+  display: block;
+  font-size: 15px;
+}
+
+.deadline-label {
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+.urgency-urgent {
+  font-weight: 700;
+  color: var(--rr-urgent);
+}
+
+.urgency-soon {
+  color: var(--rr-ink);
+}
+
+.urgency-normal,
+.urgency-overdue {
+  color: var(--rr-ink-2);
+}
+
+/* Status tags. These colors are the design doc's suggestions; the final ones are still being picked. */
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 2px solid var(--rr-ink);
+  color: #2B1B12;
+}
+
+.tag-to_do { background: #E6DCD0; }
+.tag-in_progress { background: #CDEBE6; }
+.tag-applied { background: #D4EDC9; }
+.tag-interviewing { background: #D3E3F5; }
+.tag-offer { background: #2F7D3B; color: #FFF6E0; }
+.tag-rejected { background: #DDDDDD; }
+
+/* "See more": the Closed section, collapsed */
+
+.closed-section {
+  margin-top: 24px;
+}
+
+.closed-section summary {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  font-weight: 700;
+  border: 2px dashed var(--rr-ink);
+  cursor: pointer;
+}
+
+/* Buttons and inputs, the same as the auth pages */
+
+.rr-btn {
+  height: 52px;
+  padding: 0 24px;
+  font-family: var(--rr-font-button);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--rr-action-text);
+  background: var(--rr-action);
+  border: 3px solid var(--rr-ink);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--rr-action-shadow);
+  cursor: pointer;
+}
+
+.rr-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.rr-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--rr-ink);
+  background: var(--rr-field);
+  border: 3px solid var(--rr-ink);
+  border-radius: 0;
+}
+
+select.rr-input,
+input.rr-input {
+  height: 48px;
+}
+
+textarea.rr-input {
+  resize: vertical;
+}
+
+.rr-input[aria-invalid="true"] {
+  border-color: var(--rr-urgent);
+}
+
+/* The Add popup. The browser shows it on top of the page when + ADD is clicked.
+   After a failed save, the server shows it instead with the is-open class. */
+
+.popup {
+  box-sizing: border-box;
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  margin: auto;
+  padding: 24px 28px 28px;
+  color: var(--rr-ink);
+  background: var(--rr-panel);
+  border: 3px solid var(--rr-ink);
+  box-shadow: 8px 8px 0 var(--rr-ink);
+}
+
+.popup::backdrop,
+.popup-backdrop {
+  background: rgba(43, 27, 18, 0.45);
+}
+
+.popup.is-open {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  height: fit-content;
+}
+
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+}
+
+.popup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.popup-head h2 {
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  text-decoration: none;
+  color: var(--rr-ink);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field-error {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--rr-urgent);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.checkbox input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--rr-ink);
+}
+
+.required-note {
+  margin: 0;
+  font-size: 14px;
+  color: var(--rr-ink-2);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.link-btn {
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--rr-ink);
+  text-decoration: underline;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Keyboard focus, the same 3px outline as the auth pages */
+
+.rr-input:focus,
+.rr-btn:focus-visible,
+.close-btn:focus-visible,
+.link-btn:focus-visible,
+summary:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  .title-row h1 {
+    font-size: 32px;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+}
