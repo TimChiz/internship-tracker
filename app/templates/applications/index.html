@@ -1,0 +1,204 @@
+{# The Applications page (issue #29): the table, grouped into sections, and the Add popup.
+   The layout and every state follow product/applications_table_plan.md (issue #20). No JavaScript:
+   the popup opens with HTML's popover attribute, and "See more" uses a <details> tag. #}
+
+{# One table row. row comes from build_row in app/services/applications.py. #}
+{% macro app_row(row) %}
+<tr>
+  <td class="cell-name">{{ row.name }}</td>
+  <td>
+    {% if row.url %}
+    <a href="{{ row.url }}" target="_blank" rel="noopener noreferrer">Open&nbsp;↗<span class="visually-hidden"> (opens in a new tab)</span></a>
+    {% else %}
+    <span class="muted" title="No link">—</span>
+    {% endif %}
+  </td>
+  <td><span class="tag tag-{{ row.status }}">{{ row.status_label }}</span></td>
+  <td><span class="notes">{{ row.notes }}</span></td>
+  <td>
+    <span class="deadline{% if not row.has_deadline %} muted{% endif %}">{{ row.deadline_text }}</span>
+    {% if row.label %}<span class="deadline-label urgency-{{ row.urgency }}">{{ row.label }}</span>{% endif %}
+  </td>
+</tr>
+{% endmacro %}
+
+{# The same column widths for both tables, so the Closed table lines up with the main one. #}
+{% macro table_columns() %}
+<colgroup>
+  <col class="col-name"><col class="col-link"><col class="col-status"><col class="col-notes"><col class="col-deadline">
+</colgroup>
+{% endmacro %}
+
+{# Closes the popup. Normally the browser closes it (popovertargetaction="hide"). After a
+   failed save the popup is shown by the server instead, so closing means reloading the table. #}
+{% macro close_control(popup_open, text, label, css_class) %}
+{% if popup_open %}
+<a href="{{ url_for('applications.index') }}" class="{{ css_class }}" aria-label="{{ label }}">{{ text }}</a>
+{% else %}
+<button type="button" class="{{ css_class }}" popovertarget="add-popup" popovertargetaction="hide" aria-label="{{ label }}">{{ text }}</button>
+{% endif %}
+{% endmacro %}
+
+{# The error under a form field, if it has one. #}
+{% macro field_error(name) %}
+{% if form_errors[name] %}<p id="{{ name }}-error" class="field-error">{{ form_errors[name] }}</p>{% endif %}
+{% endmacro %}
+
+{% set popup_open = form_errors|length > 0 %}
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rat Race — Applications</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/applications.css') }}">
+</head>
+<body>
+  <header class="band-header">
+    <div class="page-width header-row">
+      <p class="wordmark">Rat Race</p>
+      <p class="username">{{ current_user.username }}</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="band-middle">
+      <div class="page-width title-row">
+        <h1>Applications</h1>
+        <button type="button" class="rr-btn" popovertarget="add-popup">+ ADD</button>
+      </div>
+    </div>
+
+    <div class="band-lower">
+      <div class="page-width">
+        {% if not has_applications %}
+        <section class="panel empty-panel">
+          <h2>No applications yet</h2>
+          <p>Click + ADD to add your first one.</p>
+        </section>
+        {% else %}
+        {% set to_apply, applied, closed = sections %}
+        <div class="table-wrap">
+          <table class="app-table">
+            {{ table_columns() }}
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Link</th>
+                <th scope="col">Status</th>
+                <th scope="col">Notes</th>
+                <th scope="col">Deadline</th>
+              </tr>
+            </thead>
+            {% for section in (to_apply, applied) %}
+            <tbody>
+              <tr class="section-header">
+                <th colspan="5" scope="rowgroup">{{ section.title }} · {{ section.rows|length }}</th>
+              </tr>
+              {% for row in section.rows %}
+              {{ app_row(row) }}
+              {% else %}
+              <tr><td colspan="5" class="muted">Nothing here yet</td></tr>
+              {% endfor %}
+            </tbody>
+            {% endfor %}
+          </table>
+        </div>
+
+        {% if closed.rows %}
+        <details class="closed-section">
+          <summary>See more ({{ closed.rows|length }})</summary>
+          <div class="table-wrap">
+            <table class="app-table">
+              {{ table_columns() }}
+              <tbody>
+                <tr class="section-header">
+                  <th colspan="5" scope="rowgroup">{{ closed.title }} · {{ closed.rows|length }}</th>
+                </tr>
+                {% for row in closed.rows %}
+                {{ app_row(row) }}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </details>
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </main>
+
+  {% if popup_open %}<div class="popup-backdrop"></div>{% endif %}
+  <div id="add-popup" class="popup{% if popup_open %} is-open{% endif %}" {% if not popup_open %}popover{% endif %} role="dialog" aria-labelledby="add-title">
+    <div class="popup-head">
+      <h2 id="add-title">Add an application</h2>
+      {{ close_control(popup_open, "✕", "Close", "close-btn") }}
+    </div>
+
+    <form method="post" action="{{ url_for('applications.new') }}" class="add-form">
+      <div class="field">
+        <label for="company">Company <span aria-hidden="true">*</span></label>
+        <input id="company" name="company" class="rr-input" required maxlength="120" autofocus
+               value="{{ form_values.get('company', '') }}"
+               {% if form_errors.company %}aria-invalid="true" aria-describedby="company-error"{% endif %}>
+        {{ field_error("company") }}
+      </div>
+
+      <div class="field">
+        <label for="role">Role <span aria-hidden="true">*</span></label>
+        <input id="role" name="role" class="rr-input" required maxlength="120"
+               value="{{ form_values.get('role', '') }}"
+               {% if form_errors.role %}aria-invalid="true" aria-describedby="role-error"{% endif %}>
+        {{ field_error("role") }}
+      </div>
+
+      <div class="field">
+        <label for="url">Link</label>
+        <input id="url" name="url" type="url" class="rr-input" maxlength="2048" placeholder="https://"
+               value="{{ form_values.get('url', '') }}"
+               {% if form_errors.url %}aria-invalid="true" aria-describedby="url-error"{% endif %}>
+        {{ field_error("url") }}
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" name="status" class="rr-input"
+                  {% if form_errors.status %}aria-invalid="true" aria-describedby="status-error"{% endif %}>
+            {% for value, label in status_options %}
+            <option value="{{ value }}" {% if form_values.get('status', 'to_do') == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          {{ field_error("status") }}
+        </div>
+
+        <div class="field">
+          <label for="deadline">Deadline</label>
+          <input id="deadline" name="deadline" type="date" class="rr-input"
+                 value="{{ form_values.get('deadline', '') }}"
+                 {% if form_errors.deadline %}aria-invalid="true" aria-describedby="deadline-error"{% endif %}>
+          {{ field_error("deadline") }}
+        </div>
+      </div>
+
+      <label class="checkbox">
+        <input type="checkbox" name="is_rolling" {% if 'is_rolling' in form_values %}checked{% endif %}>
+        Rolling deadline
+      </label>
+
+      <div class="field">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" class="rr-input" rows="3">{{ form_values.get('notes', '') }}</textarea>
+      </div>
+
+      <p class="required-note"><span aria-hidden="true">*</span> Required</p>
+
+      <div class="form-actions">
+        <button type="submit" class="rr-btn">SAVE</button>
+        {{ close_control(popup_open, "Cancel", "Cancel", "link-btn") }}
+      </div>
+    </form>
+  </div>
+</body>
+</html>
