@@ -4,7 +4,7 @@ import unittest
 from datetime import datetime, timezone
 from types import SimpleNamespace
 
-from app.constants import SECTIONS, STATUS_OPTIONS
+from app.constants import SECTIONS, STATUS_OPTIONS, TO_APPLY_STATUSES
 from app.services.tracker import (
     QuickAddResult,
     change_application_status,
@@ -14,10 +14,10 @@ from app.services.tracker import (
 
 
 class ParseQuickAddTest(unittest.TestCase):
-    def test_parses_links_without_fetching_them(self):
+    def test_parses_urls_without_fetching_them(self):
         result = parse_quick_add("  HTTPS://www.stripe.com/jobs  ")
 
-        self.assertEqual(result, QuickAddResult(link="HTTPS://www.stripe.com/jobs"))
+        self.assertEqual(result, QuickAddResult(url="HTTPS://www.stripe.com/jobs"))
         self.assertEqual((result.company, result.role), ("", ""))
 
     def test_splits_company_and_role_on_supported_dashes(self):
@@ -26,7 +26,7 @@ class ParseQuickAddTest(unittest.TestCase):
                 result = parse_quick_add(f"Stripe {separator} SWE Intern")
 
                 self.assertEqual((result.company, result.role), ("Stripe", "SWE Intern"))
-                self.assertEqual(result.link, "")
+                self.assertEqual(result.url, "")
 
     def test_company_without_role(self):
         self.assertEqual(parse_quick_add(" Stripe "), QuickAddResult(company="Stripe"))
@@ -53,7 +53,7 @@ class GetDisplayNameTest(unittest.TestCase):
             "Stripe - SWE Intern",
         )
 
-    def test_uses_link_site_without_www(self):
+    def test_uses_url_site_without_www(self):
         self.assertEqual(
             get_display_name("", "", "https://www.stripe.com/jobs"),
             "stripe.com",
@@ -65,8 +65,13 @@ class GetDisplayNameTest(unittest.TestCase):
 
 class ChangeApplicationStatusTest(unittest.TestCase):
     def test_records_first_time_leaving_to_apply_and_never_changes_it(self):
-        to_apply_status = SECTIONS[0][2][0]
-        applied_status = SECTIONS[1][2][0]
+        to_apply_status = TO_APPLY_STATUSES[0]
+        applied_status = next(
+            section_statuses[0]
+            for section_id, _, section_statuses in SECTIONS
+            if section_id == "applied"
+        )
+        # Inject times to prove only the first move out of To apply is recorded.
         application = SimpleNamespace(status=to_apply_status, applied_at=None)
         first_time = datetime(2026, 11, 6, 12, 0, tzinfo=timezone.utc)
         later_time = datetime(2026, 11, 7, 12, 0, tzinfo=timezone.utc)
@@ -84,7 +89,7 @@ class ChangeApplicationStatusTest(unittest.TestCase):
         self.assertEqual(application.applied_at, first_time)
 
     def test_rejects_status_outside_the_stored_status_values(self):
-        application = SimpleNamespace(status=SECTIONS[0][2][0], applied_at=None)
+        application = SimpleNamespace(status=TO_APPLY_STATUSES[0], applied_at=None)
 
         with self.assertRaises(ValueError):
             change_application_status(application, "not-a-status", datetime.now(timezone.utc))

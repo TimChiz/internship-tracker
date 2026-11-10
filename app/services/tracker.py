@@ -6,12 +6,11 @@ from datetime import datetime
 from typing import Optional, Protocol
 from urllib.parse import urlsplit
 
-from app.constants import SECTIONS, STATUS_OPTIONS
+from app.constants import STATUS_OPTIONS, TO_APPLY_STATUSES
 
 
-_QUICK_ADD_LINK = re.compile(r"https?://\S+", re.IGNORECASE)
+_QUICK_ADD_URL = re.compile(r"https?://\S+", re.IGNORECASE)
 _QUICK_ADD_SEPARATOR = re.compile(r"\s+[-–—]\s+")
-_TO_APPLY_STATUSES = SECTIONS[0][2]
 
 
 @dataclass(frozen=True)
@@ -20,7 +19,7 @@ class QuickAddResult:
 
     company: str = ""
     role: str = ""
-    link: str = ""
+    url: str = ""
 
 
 class StatusApplication(Protocol):
@@ -34,8 +33,8 @@ def parse_quick_add(value: str) -> QuickAddResult:
     if not text:
         raise ValueError("Type a company and role, or paste a link.")
 
-    if _QUICK_ADD_LINK.fullmatch(text):
-        return QuickAddResult(link=text)
+    if _QUICK_ADD_URL.fullmatch(text):
+        return QuickAddResult(url=text)
 
     parts = _QUICK_ADD_SEPARATOR.split(text, maxsplit=1)
     company = parts[0].strip()
@@ -50,8 +49,8 @@ def parse_quick_add(value: str) -> QuickAddResult:
     return QuickAddResult(company=company, role=role)
 
 
-def get_display_name(company: str, role: str, link: str) -> str:
-    """Build the application name from its text fields or the link's site."""
+def get_display_name(company: str, role: str, url: str) -> str:
+    """Build the application name from its text fields or the URL's site."""
     company = company.strip()
     role = role.strip()
 
@@ -61,7 +60,7 @@ def get_display_name(company: str, role: str, link: str) -> str:
         return company or role
 
     try:
-        site = urlsplit(link.strip()).hostname or ""
+        site = urlsplit(url.strip()).hostname or ""
     except ValueError:
         site = ""
 
@@ -80,8 +79,8 @@ def change_application_status(
 
     # Leaving the To apply section counts once; later status changes preserve this time.
     if (
-        application.status in _TO_APPLY_STATUSES
-        and new_status not in _TO_APPLY_STATUSES
+        application.status in TO_APPLY_STATUSES
+        and new_status not in TO_APPLY_STATUSES
         and application.applied_at is None
     ):
         application.applied_at = current_time
