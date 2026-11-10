@@ -3,7 +3,7 @@
 The form we share with testers after MVP 1, so we know what to change in MVP 2. Build it in Google Forms from the questions below.
 
 Live form: _add the link once it's made_
-Goal: 30 responses before MVP 2 (Nov 20)
+Goal: 20 responses before MVP 2
 
 ## Form settings
 
@@ -12,6 +12,8 @@ Goal: 30 responses before MVP 2 (Nov 20)
   > Hi! Thanks for trying Rat Race, our free app for tracking internship applications. This form takes about 4 minutes and is anonymous, unless you share your email at the end. Your answers decide what we fix and build next.
   >
   > *This form is part of a Minerva University course project. Responses are used only to improve this app.*
+
+
 - **Collect email addresses:** off (the last question asks for it optionally instead)
 - **Limit to 1 response:** off, so testers without a Google account can answer
 - **Progress bar:** on
@@ -28,11 +30,10 @@ A few quick questions so we know who is answering.
 | # | Question | Type | Options |
 | --- | --- | --- | --- |
 | 1 | What is your current status? \* | Multiple choice | Undergraduate student · Graduate student · Graduated in the last 2 years · Working · Other |
-| 2 | What is your field of study? \* | Multiple choice | Business / Economics · Computer Science / Engineering · Natural Sciences / Math · Social Sciences / Humanities · Arts / Design · Other |
-| 3 | Are you a Minerva University student? \* | Multiple choice | Yes · No |
-| 4 | Which statement best describes your current internship search? \* | Multiple choice | I am currently applying for Summer 2027 internships · I plan to apply but have not started yet · I am not applying now, but plan to in the future · I do not plan to apply for internships |
-| 5 | Which device did you use to try Rat Race? \* | Checkboxes | Laptop or desktop · Phone · Tablet |
-| 6 | Which browser did you use? | Multiple choice | Chrome · Safari · Firefox · Edge · Other · I don't know |
+| 2 | What is your field of study? \* | Multiple choice | Business / Economics · Computer Science / Engineering · Natural Sciences / Math · Social Sciences / Humanities · Arts / Design · Other 
+| 3 | Which statement best describes your current internship search? \* | Multiple choice | I am currently applying for Summer 2027 internships · I plan to apply but have not started yet · I am not applying now, but plan to in the future · I do not plan to apply for internships |
+| 4 | Which device did you use to try Rat Race? \* | Checkboxes | Laptop or desktop · Phone · Tablet |
+| 5 | Which browser did you use? | Multiple choice | Chrome · Safari · Firefox · Edge · Other · I don't know |
 
 **What we learn:** whether testers match our target users (undergraduates applying for internships), and which devices and browsers to test on.
 
@@ -86,8 +87,3 @@ About the Applications table and the **+ ADD** form.
 
 ---
 
-## After responses come in
-
-- Summarise the results here, as the [idea validation form](validation_form.md) plans to.
-- Turn the most common answers to question 21 into issues for MVP 2.
-- Keep the summary for the demo video: the 3–5 minutes on how the MVPs changed should explain which feedback caused which change.
