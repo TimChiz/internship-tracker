@@ -10,7 +10,7 @@ from app import db
 from app.clock import app_now
 from app.constants import SECTIONS, STATUS_LABELS, STATUS_OPTIONS, TO_APPLY_STATUSES
 from app.models import Application, User
-from app.repositories.applications import ApplicationRepository, add_application
+from app.repositories.applications import ApplicationRepository
 from app.services.deadlines import format_date, get_deadline_label
 from app.services.tracker import change_application_status
 
@@ -91,7 +91,7 @@ def create_application(user: User, values: dict) -> Application:
     )
     change_application_status(application, values["status"], app_now())
 
-    add_application(application)
+    ApplicationRepository.add(application)
     db.session.commit()
     return application
 

@@ -6,7 +6,11 @@ from datetime import datetime
 from typing import Optional, Protocol
 from urllib.parse import urlsplit
 
+from app import db
 from app.constants import STATUS_OPTIONS, TO_APPLY_STATUSES
+from app.models import Application
+from app.repositories.applications import ApplicationRepository
+from app.services.errors import NotFoundError
 
 
 _QUICK_ADD_URL = re.compile(r"https?://\S+", re.IGNORECASE)
@@ -86,3 +90,49 @@ def change_application_status(
         application.applied_at = current_time
 
     application.status = new_status
+
+
+def create_application(
+    user_id: int, quick_add_text: str, current_time: datetime
+) -> Application:
+    """Parse and save a new to-do application for a user."""
+    parsed = parse_quick_add(quick_add_text)
+    application = Application(
+        user_id=user_id,
+        company=parsed.company,
+        role=parsed.role,
+        url=parsed.url or None,
+        status=TO_APPLY_STATUSES[0],
+        created_at=current_time,
+        updated_at=current_time,
+    )
+    ApplicationRepository.add(application)
+    db.session.commit()
+    return application
+
+
+def update_application_status(
+    user_id: int,
+    application_id: int,
+    new_status: str,
+    current_time: datetime,
+) -> Application:
+    """Change an owned application's status and save the update."""
+    application = ApplicationRepository.get_for_user(user_id, application_id)
+    if application is None:
+        raise NotFoundError("Application not found.")
+
+    change_application_status(application, new_status, current_time)
+    application.updated_at = current_time
+    db.session.commit()
+    return application
+
+
+def delete_application(user_id: int, application_id: int) -> None:
+    """Delete an owned application."""
+    application = ApplicationRepository.get_for_user(user_id, application_id)
+    if application is None:
+        raise NotFoundError("Application not found.")
+
+    ApplicationRepository.delete(application)
+    db.session.commit()
