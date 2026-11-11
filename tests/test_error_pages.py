@@ -15,6 +15,7 @@ class ErrorPagesTest(unittest.TestCase):
         self.app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite://"})
         self.app.add_url_rule("/test/500", "test_500", lambda: abort(500))
         self.app.add_url_rule("/test/409", "test_409", lambda: abort(409))
+        self.app.add_url_rule("/test/405", "test_405", lambda: abort(405))
         self.client = self.app.test_client()
 
     def assert_error_page(self, response, code, message):
@@ -31,8 +32,8 @@ class ErrorPagesTest(unittest.TestCase):
         self.assert_error_page(self.client.get("/no-such-page"), 404, "Page not found")
 
     def test_wrong_method(self):
-        """Sending a form to a page that doesn't accept one shows 405 Method not allowed."""
-        self.assert_error_page(self.client.post("/login"), 405, "Method not allowed")
+        """A 405 error shows Method not allowed. Uses a test-only route, so it keeps working once /login accepts forms."""
+        self.assert_error_page(self.client.get("/test/405"), 405, "Method not allowed")
 
     def test_server_error(self):
         """A 500 error shows Internal server error."""

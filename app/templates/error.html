@@ -1,4 +1,4 @@
-{# One error page for every HTTP error. It shows "<code> <message>" and nothing else; the logo is the way back. #}
+{# One error page for every HTTP error. It shows "<code> <message>" and a Back to home link. The logo links home too. #}
 <!doctype html>
 <html lang="en" data-theme="day">
 <head>
@@ -37,6 +37,7 @@
       </section>
       <section class="rr-band--lower">
         <p class="rr-message">{{ message }}</p>
+        <a class="rr-home-link" href="{{ url_for('home.index') }}">Back to home</a>
       </section>
     </main>
   </div>

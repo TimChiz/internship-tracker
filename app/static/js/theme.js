@@ -5,7 +5,8 @@
  * Why this file is loaded in the <head>: it applies the saved choice before the page is drawn,
  * so a night mode page never flashes in day colors while it loads.
  *
- * Any page that loads this file needs a button with id="theme-toggle". That button is the sun/moon switch.
+ * To show the sun/moon switch, a page adds a button with id="theme-toggle". Pages without that button
+ * still get the saved day/night choice; the switch code just skips them.
  *
  * New to JavaScript? Here's what you need for this file:
  * - Everything here runs in the visitor's browser, not on our Python server.
@@ -50,12 +51,17 @@ function saveTheme(theme) {
 }
 
 /**
- * Make the day/night switch's label say what clicking it will do next.
+ * Make the day/night switch's label say what clicking it will do next. Does nothing on pages without the switch.
  */
 function updateThemeToggleLabel() {
+  const themeToggle = document.getElementById("theme-toggle");
+  // getElementById gives null when the page has no switch, like None in Python.
+  if (themeToggle === null) {
+    return;
+  }
+
   const isNight = document.documentElement.dataset.theme === "night";
   const label = isNight ? "Switch to day mode" : "Switch to night mode";
-  const themeToggle = document.getElementById("theme-toggle");
 
   // aria-label is what screen readers announce. title is the tooltip shown on hover.
   themeToggle.setAttribute("aria-label", label);
@@ -86,11 +92,16 @@ function toggleTheme() {
 
 /**
  * Set the switch's label and make it respond to clicks. This waits for the page's HTML,
- * because this file runs in the <head>, before the switch exists.
+ * because this file runs in the <head>, before the switch exists. Does nothing on pages without the switch.
  */
 function connectThemeToggle() {
+  const themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle === null) {
+    return;
+  }
+
   updateThemeToggleLabel();
-  document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+  themeToggle.addEventListener("click", toggleTheme);
 }
 
 // These lines run as soon as the browser loads the file.

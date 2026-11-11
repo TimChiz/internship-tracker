@@ -148,6 +148,34 @@ body {
   text-box: trim-both cap alphabetic;
 }
 
+/* Back to home: a link that looks like the app's primary button, and presses into its shadow when clicked. */
+
+.rr-home-link {
+  margin-top: 32px;
+  height: 56px;
+  padding: 0 32px;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--rr-font-button);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--rr-action-text);
+  text-decoration: none;
+  background: var(--rr-action);
+  border: 3px solid var(--rr-ink);
+  box-shadow: 4px 4px 0 var(--rr-action-shadow); /* Hard shadow, no blur */
+}
+
+.rr-home-link:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.rr-home-link:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 4px;
+}
+
 /* Day/night is a change of light, not movement, so colors cross-fade. */
 
 .rr-header,
