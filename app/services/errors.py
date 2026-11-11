@@ -6,3 +6,7 @@ class AuthError(Exception):
 
     The message is safe to show to the user.
     """
+
+
+class NotFoundError(Exception):
+    """Raised when a requested resource does not exist or is not accessible."""
