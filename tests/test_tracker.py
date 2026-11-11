@@ -12,7 +12,7 @@ from app.services.errors import NotFoundError
 from app.services.tracker import (
     QuickAddResult,
     change_application_status,
-    create_application,
+    create_application_quick_add,
     delete_application,
     get_display_name,
     parse_quick_add,
@@ -126,7 +126,7 @@ class TrackerServiceTest(unittest.TestCase):
         self.context.pop()
 
     def test_creates_application_from_a_link(self):
-        application = create_application(
+        application = create_application_quick_add(
             self.user_a.id, "https://www.stripe.com/jobs", self.current_time
         )
 
@@ -137,7 +137,7 @@ class TrackerServiceTest(unittest.TestCase):
         self.assertEqual(application.updated_at, self.current_time)
 
     def test_creates_application_from_company_and_role(self):
-        application = create_application(
+        application = create_application_quick_add(
             self.user_a.id, "Stripe – SWE Intern", self.current_time
         )
 
@@ -146,12 +146,12 @@ class TrackerServiceTest(unittest.TestCase):
 
     def test_blank_quick_add_fails_without_saving(self):
         with self.assertRaisesRegex(ValueError, "Type a company and role"):
-            create_application(self.user_a.id, "  ", self.current_time)
+            create_application_quick_add(self.user_a.id, "  ", self.current_time)
 
         self.assertEqual(Application.query.count(), 0)
 
     def test_update_to_applied_records_sent_and_updated_times(self):
-        application = create_application(
+        application = create_application_quick_add(
             self.user_a.id, "Stripe - SWE Intern", self.current_time
         )
         applied_time = datetime(2026, 11, 11, 12, 0)
@@ -165,7 +165,7 @@ class TrackerServiceTest(unittest.TestCase):
         self.assertEqual(updated.updated_at, applied_time)
 
     def test_unknown_status_fails(self):
-        application = create_application(
+        application = create_application_quick_add(
             self.user_a.id, "Stripe - SWE Intern", self.current_time
         )
 
@@ -178,7 +178,7 @@ class TrackerServiceTest(unittest.TestCase):
         self.assertEqual(application.status, "to_do")
 
     def test_another_user_cannot_update_or_delete_application(self):
-        application = create_application(
+        application = create_application_quick_add(
             self.user_a.id, "Stripe - SWE Intern", self.current_time
         )
 
@@ -194,7 +194,7 @@ class TrackerServiceTest(unittest.TestCase):
         )
 
     def test_delete_removes_owned_application(self):
-        application = create_application(
+        application = create_application_quick_add(
             self.user_a.id, "Stripe - SWE Intern", self.current_time
         )
 
@@ -207,9 +207,9 @@ class TrackerServiceTest(unittest.TestCase):
     def test_sent_count_includes_start_but_excludes_end(self):
         start = datetime(2026, 11, 1)
         end = datetime(2026, 11, 8)
-        at_start = create_application(self.user_a.id, "Start", start)
-        at_end = create_application(self.user_a.id, "End", end)
-        other_user_at_start = create_application(self.user_b.id, "Other user", start)
+        at_start = create_application_quick_add(self.user_a.id, "Start", start)
+        at_end = create_application_quick_add(self.user_a.id, "End", end)
+        other_user_at_start = create_application_quick_add(self.user_b.id, "Other user", start)
         at_start.applied_at = start
         at_end.applied_at = end
         other_user_at_start.applied_at = start
