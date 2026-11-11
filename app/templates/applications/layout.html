@@ -1,0 +1,37 @@
+{# Shared page for the logged-in Applications pages: the table, the edit page and the delete confirmation.
+   The header lives here once, so the shared header (#39) only needs to change this file. #}
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rat Race — {% block page_title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/applications.css') }}">
+</head>
+<body>
+  <header class="band-header">
+    <div class="page-width header-row">
+      <p class="wordmark">Rat Race</p>
+      <p class="username">{{ current_user.username }}</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="band-middle">
+      <div class="page-width title-row">
+        <h1>{% block heading %}{% endblock %}</h1>
+        {% block title_actions %}{% endblock %}
+      </div>
+    </div>
+
+    <div class="band-lower">
+      <div class="page-width">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </main>
+
+  {% block after_main %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,23 @@
+{# The edit page (issue #40): the same fields as the Add popup, already filled in, plus Save, Cancel and Delete.
+   Editing is a full page rather than a popup because notes can get long (decided in review on #32). #}
+{% extends "applications/layout.html" %}
+{% from "applications/fields.html" import application_fields %}
+
+{% block page_title %}Edit {{ name }}{% endblock %}
+{% block heading %}Edit application{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+  <h2 class="form-panel-title">{{ name }}</h2>
+
+  <form method="post" action="{{ url_for('applications.edit', application_id=application_id) }}" class="add-form">
+    {{ application_fields(form_values, form_errors, status_options, notes_rows=8) }}
+
+    <div class="form-actions">
+      <button type="submit" class="rr-btn">SAVE</button>
+      <a href="{{ url_for('applications.index') }}" class="link-btn">Cancel</a>
+      <a href="{{ url_for('applications.delete', application_id=application_id) }}" class="link-btn danger-link">Delete</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
