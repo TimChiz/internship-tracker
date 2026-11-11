@@ -1,12 +1,8 @@
 import unittest
 from datetime import date, datetime
 
-from app.constants import SECTIONS, STATUS_OPTIONS
+from app.constants import STATUS_OPTIONS, TO_APPLY_STATUSES
 from app.services.deadlines import format_date, get_deadline_label, get_week_bounds
-
-TO_APPLY_STATUSES = next(
-    statuses for section_id, _, statuses in SECTIONS if section_id == "to_apply"
-)
 
 
 class DeadlineTests(unittest.TestCase):

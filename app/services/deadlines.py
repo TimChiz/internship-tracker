@@ -1,11 +1,6 @@
 from datetime import date, datetime, time, timedelta
 
-from app.constants import SECTIONS
-
-
-TO_APPLY_STATUSES = next(
-    statuses for section_id, _, statuses in SECTIONS if section_id == "to_apply"
-)
+from app.constants import TO_APPLY_STATUSES
 
 
 def get_week_bounds(today: date) -> tuple[datetime, datetime]:

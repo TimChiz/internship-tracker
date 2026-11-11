@@ -8,10 +8,11 @@ from datetime import date, datetime
 
 from app import db
 from app.clock import app_now
-from app.constants import SECTIONS, STATUS_LABELS, STATUS_OPTIONS
+from app.constants import SECTIONS, STATUS_LABELS, STATUS_OPTIONS, TO_APPLY_STATUSES
 from app.models import Application, User
 from app.repositories.applications import ApplicationRepository, add_application
-from app.services.deadlines import TO_APPLY_STATUSES, format_date, get_deadline_label
+from app.services.deadlines import format_date, get_deadline_label
+from app.services.tracker import change_application_status
 
 # Same limits as the columns in app/models.py
 MAX_NAME_LENGTH = 120
@@ -83,9 +84,12 @@ def create_application(user: User, values: dict) -> Application:
     If it's added as already applied (or further), applied_at is set now,
     so it counts on this week's leaderboard.
     """
-    application = Application(user_id=user.id, **values)
-    if values["status"] not in TO_APPLY_STATUSES:
-        application.applied_at = app_now()
+    # Route initial status changes through the same rule used for later updates.
+    application = Application(
+        user_id=user.id,
+        **{**values, "status": TO_APPLY_STATUSES[0]},
+    )
+    change_application_status(application, values["status"], app_now())
 
     add_application(application)
     db.session.commit()

@@ -19,3 +19,7 @@ SECTIONS = (
     ("applied", "Applied", ("applied", "interviewing")),
     ("closed", "Closed", ("offer", "rejected")),
 )
+
+TO_APPLY_STATUSES = next(
+    statuses for section_id, _, statuses in SECTIONS if section_id == "to_apply"
+)
