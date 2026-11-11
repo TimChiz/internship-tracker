@@ -1,0 +1,17 @@
+{# The delete confirmation (issue #40): one more step before an application is gone for good. #}
+{% extends "applications/layout.html" %}
+
+{% block page_title %}Delete {{ name }}{% endblock %}
+{% block heading %}Delete application{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+  <h2 class="form-panel-title">Delete {{ name }}?</h2>
+  <p class="muted">This can't be undone.</p>
+
+  <form method="post" action="{{ url_for('applications.delete', application_id=application_id) }}" class="form-actions">
+    <button type="submit" class="rr-btn danger-btn">YES, DELETE</button>
+    <a href="{{ url_for('applications.edit', application_id=application_id) }}" class="link-btn">Cancel</a>
+  </form>
+</section>
+{% endblock %}
