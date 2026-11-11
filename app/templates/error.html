@@ -1,0 +1,45 @@
+{# One error page for every HTTP error. It shows "<code> <message>" and a Back to home link. The logo links home too. #}
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ code }} {{ message }} · Rat Race</title>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/error_design.css') }}">
+</head>
+<body>
+  <div class="rr-error">
+    <header class="rr-header">
+      <a class="rr-logo" href="{{ url_for('home.index') }}" aria-label="Rat Race home">
+        <img src="{{ url_for('static', filename='images/rr-logo.png') }}" alt="" width="48" height="48">
+      </a>
+      <button type="button" id="theme-toggle" class="rr-theme-toggle" aria-label="Switch to night mode">
+        {# Pixel sun: 3px per pixel on a 16 × 16 grid. Paths: hard shadow, outline, body. #}
+        <svg class="rr-icon rr-icon--sun" width="48" height="48" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+          <path class="ink" d="M6 1h4v1h-4zM4 2h8v1h-8zM3 3h10v1h-10zM2 4h12v1h-12zM2 5h12v1h-12zM1 6h14v1h-14zM1 7h14v1h-14zM1 8h14v1h-14zM1 9h14v1h-14zM2 10h12v1h-12zM2 11h12v1h-12zM3 12h10v1h-10zM4 13h8v1h-8zM6 14h4v1h-4z"/>
+          <path class="ink" d="M5 0h4v1h-4zM3 1h2v1h-2zM9 1h2v1h-2zM2 2h1v1h-1zM11 2h1v1h-1zM1 3h1v1h-1zM12 3h1v1h-1zM1 4h1v1h-1zM12 4h1v1h-1zM0 5h1v1h-1zM13 5h1v1h-1zM0 6h1v1h-1zM13 6h1v1h-1zM0 7h1v1h-1zM13 7h1v1h-1zM0 8h1v1h-1zM13 8h1v1h-1zM1 9h1v1h-1zM12 9h1v1h-1zM1 10h1v1h-1zM12 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM3 12h2v1h-2zM9 12h2v1h-2zM5 13h4v1h-4z"/>
+          <path class="body" d="M5 1h4v1h-4zM3 2h8v1h-8zM2 3h10v1h-10zM2 4h10v1h-10zM1 5h12v1h-12zM1 6h12v1h-12zM1 7h12v1h-12zM1 8h12v1h-12zM2 9h10v1h-10zM2 10h10v1h-10zM3 11h8v1h-8zM5 12h4v1h-4z"/>
+        </svg>
+        {# Pixel crescent moon, same grid and layers. #}
+        <svg class="rr-icon rr-icon--moon" width="48" height="48" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+          <path class="ink" d="M6 1h1v1h-1zM4 2h4v1h-4zM3 3h5v1h-5zM2 4h5v1h-5zM2 5h5v1h-5zM1 6h6v1h-6zM1 7h7v1h-7zM1 8h7v1h-7zM1 9h12v1h-12zM2 10h12v1h-12zM2 11h12v1h-12zM3 12h10v1h-10zM4 13h8v1h-8zM6 14h4v1h-4z"/>
+          <path class="ink" d="M5 0h1v1h-1zM3 1h2v1h-2zM6 1h1v1h-1zM2 2h1v1h-1zM6 2h1v1h-1zM1 3h1v1h-1zM5 3h1v1h-1zM1 4h1v1h-1zM5 4h1v1h-1zM0 5h1v1h-1zM5 5h1v1h-1zM0 6h1v1h-1zM6 6h1v1h-1zM0 7h1v1h-1zM6 7h1v1h-1zM0 8h1v1h-1zM7 8h5v1h-5zM1 9h1v1h-1zM12 9h1v1h-1zM1 10h1v1h-1zM12 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM3 12h2v1h-2zM9 12h2v1h-2zM5 13h4v1h-4z"/>
+          <path class="body" d="M5 1h1v1h-1zM3 2h3v1h-3zM2 3h3v1h-3zM2 4h3v1h-3zM1 5h4v1h-4zM1 6h5v1h-5zM1 7h5v1h-5zM1 8h6v1h-6zM2 9h10v1h-10zM2 10h10v1h-10zM3 11h8v1h-8zM5 12h4v1h-4z"/>
+        </svg>
+      </button>
+    </header>
+
+    <main class="rr-main">
+      <section class="rr-band--middle">
+        <h1 class="rr-code">{{ code }}</h1>
+      </section>
+      <section class="rr-band--lower">
+        <p class="rr-message">{{ message }}</p>
+        <a class="rr-home-link" href="{{ url_for('home.index') }}">Back to home</a>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,8 +1,12 @@
 /**
- * Remembers whether the visitor chose day or night mode, so the choice carries over between pages.
+ * Day and night mode for every page: remembers the visitor's choice and runs the sun/moon switch.
+ * The choice carries over between pages.
  *
- * Why this file is separate: layout.html loads it in the <head>, before the page is drawn.
- * That way, a night mode page never flashes in day colors while it loads.
+ * Why this file is loaded in the <head>: it applies the saved choice before the page is drawn,
+ * so a night mode page never flashes in day colors while it loads.
+ *
+ * To show the sun/moon switch, a page adds a button with id="theme-toggle". Pages without that button
+ * still get the saved day/night choice; the switch code just skips them.
  *
  * New to JavaScript? Here's what you need for this file:
  * - Everything here runs in the visitor's browser, not on our Python server.
@@ -11,6 +15,9 @@
  * - "try / catch" works like "try / except" in Python.
  * - "condition ? a : b" means "a if condition else b" in Python.
  * - "===" means "is exactly equal to", like "==" in Python.
+ * - "document" is the current page. document.getElementById("x") finds the HTML tag with id="x".
+ * - addEventListener("click", someFunction) means "run someFunction whenever this is clicked".
+ *   The function's name has no () after it, because the browser runs it later, not right now.
  * - localStorage is a small storage space in the browser. Saved values are still there on the next page.
  */
 
@@ -43,7 +50,67 @@ function saveTheme(theme) {
   }
 }
 
-// This line runs as soon as the browser loads the file.
+/**
+ * Make the day/night switch's label say what clicking it will do next. Does nothing on pages without the switch.
+ */
+function updateThemeToggleLabel() {
+  const themeToggle = document.getElementById("theme-toggle");
+  // getElementById gives null when the page has no switch, like None in Python.
+  if (themeToggle === null) {
+    return;
+  }
+
+  const isNight = document.documentElement.dataset.theme === "night";
+  const label = isNight ? "Switch to day mode" : "Switch to night mode";
+
+  // aria-label is what screen readers announce. title is the tooltip shown on hover.
+  themeToggle.setAttribute("aria-label", label);
+  themeToggle.setAttribute("title", label);
+}
+
+/**
+ * Show the saved day/night choice. This also covers the browser's Back button,
+ * which can restore an old copy of a page from before the choice changed.
+ */
+function applySavedTheme() {
+  document.documentElement.dataset.theme = readSavedTheme();
+  updateThemeToggleLabel();
+}
+
+/**
+ * Switch the page between day and night, and remember the choice for other pages.
+ */
+function toggleTheme() {
+  const root = document.documentElement;
+  const nextTheme = root.dataset.theme === "night" ? "day" : "night";
+
+  // Changing this attribute is all it takes to change the colors. The CSS does the rest.
+  root.dataset.theme = nextTheme;
+  saveTheme(nextTheme);
+  updateThemeToggleLabel();
+}
+
+/**
+ * Set the switch's label and make it respond to clicks. This waits for the page's HTML,
+ * because this file runs in the <head>, before the switch exists. Does nothing on pages without the switch.
+ */
+function connectThemeToggle() {
+  const themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle === null) {
+    return;
+  }
+
+  updateThemeToggleLabel();
+  themeToggle.addEventListener("click", toggleTheme);
+}
+
+// These lines run as soon as the browser loads the file.
 // document.documentElement is the page's <html> tag, and dataset.theme is its data-theme attribute.
 // tokens.css picks the day or night colors based on that attribute.
 document.documentElement.dataset.theme = readSavedTheme();
+
+// "DOMContentLoaded" happens once the page's HTML has been read, so the switch exists by then.
+document.addEventListener("DOMContentLoaded", connectThemeToggle);
+
+// "pageshow" happens whenever a page appears, including when someone returns with the Back button.
+window.addEventListener("pageshow", applySavedTheme);

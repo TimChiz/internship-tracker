@@ -1,0 +1,195 @@
+/*
+ * Styles for the error page, which shows "<code> <message>" for every HTTP error.
+ * Colors and fonts come from tokens.css. The design is in the error page handoff from the design team.
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background: var(--rr-band-lower);
+}
+
+/* The page: three stacked bands that fill the window. Each band paints its own background. */
+
+.rr-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--rr-band-lower);
+  color: var(--rr-ink);
+  font-family: var(--rr-font-title);
+  font-weight: 400;
+}
+
+/* Band 1: the header, with the logo on the left and the day/night switch on the right. */
+
+.rr-header {
+  flex: none;
+  height: 96px;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--rr-band-header);
+  border-bottom: 2px solid var(--rr-ink);
+}
+
+.rr-logo {
+  display: block;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+}
+
+.rr-logo img {
+  display: block;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--rr-ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--rr-ink); /* Hard shadow, no blur */
+}
+
+.rr-theme-toggle {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rr-icon {
+  display: block;
+}
+
+.rr-icon .ink {
+  fill: var(--rr-ink);
+}
+
+.rr-icon .body {
+  fill: var(--rr-sun);
+}
+
+[data-theme="day"] .rr-icon--moon,
+[data-theme="night"] .rr-icon--sun {
+  display: none;
+}
+
+.rr-logo:focus-visible,
+.rr-theme-toggle:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 4px;
+}
+
+.rr-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Band 2: the code stands on this band's bottom edge. */
+
+.rr-band--middle {
+  flex: 1 1 0;
+  min-height: 288px;
+  padding: 48px 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background: var(--rr-band-middle);
+}
+
+/* Band 3: the message sits 40px below the edge, and the band runs to the bottom of the page. */
+
+.rr-band--lower {
+  flex: 1 1 0;
+  min-height: 192px;
+  padding: 40px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: var(--rr-band-lower);
+}
+
+.rr-code {
+  /* Paints above the lower band, so digits that dip below the baseline aren't clipped. */
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font: inherit;
+  font-size: min(256px, 28vw); /* 256px (16 × 16) on desktop, so Pixelbasel stays crisp */
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  /* Trims the line box to the glyphs, so the digits stand exactly on the band edge. */
+  text-box: trim-both cap alphabetic;
+}
+
+.rr-message {
+  margin: 0;
+  font-size: 32px; /* 2 × 16 */
+  line-height: 1;
+  text-align: center;
+  text-box: trim-both cap alphabetic;
+}
+
+/* Back to home: a link that looks like the app's primary button, and presses into its shadow when clicked. */
+
+.rr-home-link {
+  margin-top: 32px;
+  height: 56px;
+  padding: 0 32px;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--rr-font-button);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: var(--rr-action-text);
+  text-decoration: none;
+  background: var(--rr-action);
+  border: 3px solid var(--rr-ink);
+  box-shadow: 4px 4px 0 var(--rr-action-shadow); /* Hard shadow, no blur */
+}
+
+.rr-home-link:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.rr-home-link:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 4px;
+}
+
+/* Day/night is a change of light, not movement, so colors cross-fade. */
+
+.rr-header,
+.rr-band--middle,
+.rr-band--lower,
+.rr-logo img {
+  transition: background-color 300ms ease, border-color 300ms ease, box-shadow 300ms ease, color 300ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rr-header,
+  .rr-band--middle,
+  .rr-band--lower,
+  .rr-logo img {
+    transition: none;
+  }
+}

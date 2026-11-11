@@ -64,6 +64,8 @@ def create_app(test_config=None):
     from .routes.auth import auth
     app.register_blueprint(auth)
 
+    from .routes.errors import errors
+    app.register_blueprint(errors)
     from .routes.applications import applications
     app.register_blueprint(applications)
 
