@@ -1,5 +1,5 @@
-"""Business rules for the Applications table: checking the Add form, saving a new
-application, and grouping and sorting applications into the table's sections.
+"""Business rules for the Applications table: checking the Add and edit forms, saving
+and updating applications, and grouping and sorting them into the table's sections.
 
 The rules come from product/applications_table_plan.md (issue #20).
 """
@@ -12,6 +12,7 @@ from app.constants import SECTIONS, STATUS_LABELS, STATUS_OPTIONS, TO_APPLY_STAT
 from app.models import Application, User
 from app.repositories.applications import ApplicationRepository
 from app.services.deadlines import format_date, get_deadline_label
+from app.services.errors import NotFoundError
 from app.services.tracker import change_application_status
 
 # Same limits as the columns in app/models.py
@@ -96,6 +97,59 @@ def create_application(user: User, values: dict) -> Application:
     return application
 
 
+def get_application(user: User, application_id: int) -> Application:
+    """Return one of this user's applications.
+
+    Raises NotFoundError if it doesn't exist or belongs to someone else, so nobody
+    can tell which ids exist by trying other users' applications.
+    """
+    application = ApplicationRepository.get_for_user(user.id, application_id)
+    if application is None:
+        raise NotFoundError("Application not found.")
+    return application
+
+
+def update_application(user: User, application_id: int, values: dict) -> Application:
+    """Save the edit page's changes to one of this user's applications and return it.
+
+    values: the cleaned values from validate_application_form.
+    The first time an edit moves the application out of To apply, applied_at is set,
+    and it's never cleared afterwards, the same rule as adding and the status dropdown.
+    """
+    application = get_application(user, application_id)
+    now = app_now()
+
+    for field in ("company", "role", "url", "deadline", "is_rolling", "notes"):
+        setattr(application, field, values[field])
+    change_application_status(application, values["status"], now)
+    application.updated_at = now
+
+    db.session.commit()
+    return application
+
+
+def form_values_for(application: Application) -> dict:
+    """The saved application in the same shape as a submitted form, to fill in the edit page."""
+    values = {
+        "company": application.company,
+        "role": application.role,
+        "url": application.url or "",
+        "status": application.status,
+        # A date input expects "2026-11-20", or "" for no date
+        "deadline": application.deadline.isoformat() if application.deadline else "",
+        "notes": application.notes,
+    }
+    # A ticked checkbox is sent as a field; an unticked one isn't sent at all
+    if application.is_rolling:
+        values["is_rolling"] = "on"
+    return values
+
+
+def display_name(application: Application) -> str:
+    """The name shown for an application, e.g. "Stripe - SWE Intern"."""
+    return f"{application.company} - {application.role}"
+
+
 def build_row(application: Application, today: date) -> dict:
     """Turn one application into what a table row shows."""
     label, urgency = get_deadline_label(
@@ -114,7 +168,7 @@ def build_row(application: Application, today: date) -> dict:
 
     return {
         "id": application.id,
-        "name": f"{application.company} - {application.role}",
+        "name": display_name(application),
         "url": application.url,
         "status": application.status,
         "status_label": STATUS_LABELS[application.status],
