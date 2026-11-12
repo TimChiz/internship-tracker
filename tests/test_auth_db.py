@@ -76,12 +76,12 @@ class ClaimUsernameTest(AuthDatabaseTest):
         self.assertIsNone(self.ahmed.username)
 
     def test_uppercase_version_of_taken_name_is_rejected(self):
-        """Capitals fail validation before the uniqueness check (rule from #22)."""
+        """Names are unique ignoring capitals, so Klara_Rat is taken once klara_rat exists."""
         claim_username(self.klara, "klara_rat")
         self.assertEqual(
-            claim_username(self.ahmed, "Klara_Rat"),
-            ["Use only lowercase letters, digits and _."],
+            claim_username(self.ahmed, "Klara_Rat"), ["That name is taken."]
         )
+        self.assertIsNone(self.ahmed.username)
 
     def test_invalid_name_changes_nothing(self):
         self.assertNotEqual(claim_username(self.klara, "a-"), [])

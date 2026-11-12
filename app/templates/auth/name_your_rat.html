@@ -1,24 +1,101 @@
-{# The /name-your-rat screen: a new user picks their username (issue #34).
-   A bare version on the shared auth layout until Noku's design is ready. #}
-{% extends "auth/layout.html" %}
+{# The Name Your Rat screen (issue #38): a new user flips through the rats, picks one and names it.
+   It's laid out like a game's character select: a big rat standing on a small name plaque, in the
+   desert by day or night.
 
-{% block page_title %}Name your rat{% endblock %}
-{% block heading %}Name your rat{% endblock %}
-{% block subhead %}<p>This is the name your friends will see on the leaderboard.</p>{% endblock %}
+   How flipping works without JavaScript:
+   - Each rat is a radio button, so the browser remembers the pick and sends it with the form.
+   - Each arrow is a <label> for the next or previous rat's radio button, so clicking it picks that rat.
+   - css/name_your_rat.css shows only the picked rat and the pair of arrows that belongs to it.
+   The only script is theme.js, which runs the day/night switch. #}
 
-{% block form %}
-<form id="auth-form" class="auth-form" method="post">
-  <div class="field">
-    <label class="field-label" for="rat-name">Rat name</label>
-    <input id="rat-name" class="rr-input" type="text" name="username" autocomplete="username" placeholder="speedy_rat" aria-describedby="rat-name-hint" value="{{ username }}">
-    <p id="rat-name-hint" class="field-hint">3 to 16 characters: lowercase letters, digits and _.</p>
-  </div>
+{# One pixel arrow, pointing left. The right arrow is the same picture, mirrored in the CSS. #}
+{% macro arrow_icon() %}
+<svg class="rat-arrow-icon" width="52" height="60" viewBox="0 0 13 15" shape-rendering="crispEdges" focusable="false">
+  <path class="ink" d="M6 0h7v1h-7zM5 1h2v1h-2zM12 1h1v1h-1zM4 2h2v1h-2zM11 2h2v1h-2zM3 3h2v1h-2zM10 3h2v1h-2zM2 4h2v1h-2zM9 4h2v1h-2zM1 5h2v1h-2zM8 5h2v1h-2zM0 6h2v1h-2zM7 6h2v1h-2zM0 7h1v1h-1zM6 7h2v1h-2zM0 8h2v1h-2zM7 8h2v1h-2zM1 9h2v1h-2zM8 9h2v1h-2zM2 10h2v1h-2zM9 10h2v1h-2zM3 11h2v1h-2zM10 11h2v1h-2zM4 12h2v1h-2zM11 12h2v1h-2zM5 13h2v1h-2zM12 13h1v1h-1zM6 14h7v1h-7z"/>
+  <path class="body" d="M7 1h5v1h-5zM6 2h1v1h-1zM8 2h3v1h-3zM5 3h1v1h-1zM7 3h3v1h-3zM4 4h5v1h-5zM3 5h5v1h-5zM2 6h5v1h-5zM1 7h5v1h-5zM2 8h5v1h-5zM3 9h5v1h-5zM4 10h5v1h-5zM5 11h5v1h-5zM6 12h5v1h-5zM7 13h5v1h-5z"/>
+  <path class="shine" d="M7 2h1v1h-1zM6 3h1v1h-1z"/>
+</svg>
+{% endmacro %}
 
-  <button type="submit" class="rr-btn">START RACING</button>
-</form>
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rat Race — Name your rat</title>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script> {# in the <head>, so night mode doesn't flash day colors first #}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth_design.css') }}"> {# the desert's colors, the input and the button #}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/name_your_rat.css') }}">
+</head>
+<body>
+  <main class="rat-page">
+    {% include "components/desert_scene.html" %}
+    {% include "components/theme_toggle.html" %} {# the sun or moon in the sky; clicking it switches day and night #}
 
-{# Logging out is a form (POST), not a link. See logout() in app/routes/auth.py. #}
-<form class="logout-form" method="post" action="{{ url_for('auth.logout') }}">
-  <button type="submit" class="logout-button">Not you? Log out</button>
-</form>
-{% endblock %}
+    <form class="rat-form" method="post">
+
+      {# The rat picker. The radio buttons are hidden but still work with the keyboard: Tab to the rat, then the arrow keys flip. #}
+      <div class="rat-picker" role="radiogroup" aria-label="Pick your rat">
+        {% for rat in rats %}
+        <input class="rat-choice" type="radio" name="rat" id="rat-{{ rat.key }}" value="{{ rat.key }}" aria-label="{{ rat.name }}"{% if rat.key == chosen_rat.key %} checked{% endif %}>
+        {% endfor %}
+
+        <div class="rat-stage">
+          {% for rat in rats %}
+          <img class="rat-art" src="{{ url_for('static', filename=rat.image) }}" alt=""> {# the radio button already names the rat #}
+          {% endfor %}
+        </div>
+
+        {# One pair of arrows per rat, pointing at the rats before and after it. The list wraps around at both ends. #}
+        {% for rat in rats %}
+        {% set previous_rat = rats[loop.index0 - 1] %}
+        {% set next_rat = rats[(loop.index0 + 1) % rats|length] %}
+        <span class="rat-arrows" aria-hidden="true"> {# hidden from screen readers, which use the radio buttons instead #}
+          <label class="rat-arrow rat-arrow-previous" for="rat-{{ previous_rat.key }}" title="Previous rat">{{ arrow_icon() }}</label>
+          <label class="rat-arrow rat-arrow-next" for="rat-{{ next_rat.key }}" title="Next rat">{{ arrow_icon() }}</label>
+        </span>
+        {% endfor %}
+      </div>
+
+      {# The plaque the rat stands on: the title, the (i) tip, the name box and the GO button. #}
+      <div class="name-plaque">
+        <span class="name-plaque-back" aria-hidden="true"></span> {# the plaque's notched shape, drawn in the CSS #}
+
+        <div class="name-heading">
+          <h1 class="name-title"><label for="rat-name">Name your rat</label></h1>
+          <span class="name-info">
+            <button type="button" class="info-button" aria-label="What is this name for?" aria-describedby="name-tip">
+              <svg width="27" height="27" viewBox="0 0 9 9" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+                <path class="ink" d="M2 0h5v1h-5zM1 1h7v1h-7zM0 2h9v5h-9zM1 7h7v1h-7zM2 8h5v1h-5z"/>
+                <path class="letter" d="M4 2h1v1h-1zM4 4h1v3h-1z"/>
+              </svg>
+            </button>
+            <span class="info-tip" id="name-tip" role="tooltip">This is the name your friends will see on the leaderboards.</span>
+          </span>
+        </div>
+
+        {# required, minlength, maxlength and pattern let the browser check the name as it's typed.
+           The server checks it again in claim_username, which also knows whether the name is taken. #}
+        <div class="name-row">
+          <input id="rat-name" class="rr-input name-input" type="text" name="username" value="{{ username }}" placeholder="Username"
+                 required minlength="{{ min_length }}" maxlength="{{ max_length }}" pattern="[A-Za-z0-9_]+"
+                 autocomplete="username" autocapitalize="none" spellcheck="false" aria-describedby="name-rule"{% if errors %} autofocus{% endif %}>
+          <button type="submit" class="rr-btn start-button" aria-label="Start racing">GO</button> {# the CSS lights it up once the name fits the rule; Enter also sends the form #}
+
+          {# Notes that appear under the plaque: the server's errors, and the rule while the typed name breaks it. #}
+          <div class="name-notes">
+            {% if errors %}
+            <ul class="name-errors" role="alert">
+              {% for error in errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+            {% endif %}
+            <p class="name-rule" id="name-rule">{{ min_length }} to {{ max_length }} letters, digits or _</p>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </main>
+</body>
+</html>
