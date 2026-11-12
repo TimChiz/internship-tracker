@@ -1,0 +1,12 @@
+{# The race track: a road with the user's rat in the red car. The rat sprints across once when play_race
+   is true, which the route sets right after an application is sent. Styled by css/race_track.css, no JavaScript.
+
+   It needs header (for the rat's image) and play_race from the route. It is decoration, so screen readers skip it. #}
+<div class="race-track{% if play_race %} is-racing{% endif %}" aria-hidden="true">
+  <div class="race-road"></div>
+  <div class="racer">
+    <span class="racer-speed-lines"></span>
+    <img class="racer-rat" src="{{ url_for('static', filename=header.rat_image) }}" alt="" width="42" height="35"> {# sits behind the car, so its legs are hidden #}
+    <img class="racer-car" src="{{ url_for('static', filename='images/race-car.svg') }}" alt="" width="96" height="34">
+  </div>
+</div>

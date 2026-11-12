@@ -1,0 +1,64 @@
+/*
+ * Styles for the pieces every page's header shares: the RR logo link and the day/night switch.
+ * The markup is in templates/components/header_parts.html. Colors come from tokens.css.
+ */
+
+/* The RR logo: a 48px tile with a dark outline and a hard shadow */
+
+.rr-logo {
+  display: block;
+  flex: none; /* keeps its size inside a flex header */
+  width: 48px;
+  height: 48px;
+  border-radius: 6px; /* so the focus ring follows the tile's corners */
+}
+
+.rr-logo img {
+  display: block;
+  box-sizing: border-box; /* the 2px border counts inside the 48px */
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--rr-ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--rr-ink); /* hard shadow, no blur */
+}
+
+/* The day/night switch: a bare 48px button holding the pixel sun or moon */
+
+.rr-theme-toggle {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rr-icon {
+  display: block;
+}
+
+.rr-icon .ink {
+  fill: var(--rr-ink); /* the icon's shadow and outline */
+}
+
+.rr-icon .body {
+  fill: var(--rr-sun); /* red-orange sun by day, pale yellow moon by night */
+}
+
+[data-theme="day"] .rr-icon--moon,
+[data-theme="night"] .rr-icon--sun {
+  display: none; /* only the icon for the current mode shows */
+}
+
+/* Keyboard focus */
+
+.rr-logo:focus-visible,
+.rr-theme-toggle:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 4px;
+}
