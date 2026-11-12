@@ -1,0 +1,24 @@
+{# The /name-your-rat screen: a new user picks their username (issue #34).
+   A bare version on the shared auth layout until Noku's design is ready. #}
+{% extends "auth/layout.html" %}
+
+{% block page_title %}Name your rat{% endblock %}
+{% block heading %}Name your rat{% endblock %}
+{% block subhead %}<p>This is the name your friends will see on the leaderboard.</p>{% endblock %}
+
+{% block form %}
+<form id="auth-form" class="auth-form" method="post">
+  <div class="field">
+    <label class="field-label" for="rat-name">Rat name</label>
+    <input id="rat-name" class="rr-input" type="text" name="username" autocomplete="username" placeholder="speedy_rat" aria-describedby="rat-name-hint" value="{{ username }}">
+    <p id="rat-name-hint" class="field-hint">3 to 16 characters: lowercase letters, digits and _.</p>
+  </div>
+
+  <button type="submit" class="rr-btn">START RACING</button>
+</form>
+
+{# Logging out is a form (POST), not a link. See logout() in app/routes/auth.py. #}
+<form class="logout-form" method="post" action="{{ url_for('auth.logout') }}">
+  <button type="submit" class="logout-button">Not you? Log out</button>
+</form>
+{% endblock %}
