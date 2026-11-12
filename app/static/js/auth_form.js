@@ -1,6 +1,6 @@
 /**
  * Behavior for the log in and create account forms:
- * the show/hide password buttons, and holding the form back until the auth backend exists.
+ * the show/hide password buttons.
  * The day/night switch is handled by theme.js, which every page loads.
  *
  * New to JavaScript? Here's what you need for this file:
@@ -31,18 +31,6 @@ function togglePasswordVisibility(event) {
   button.querySelector('[data-password-icon="show"]').hidden = isNowVisible;
   button.querySelector('[data-password-icon="hide"]').hidden = !isNowVisible;
 }
-
-/**
- * Stop the form from submitting.
- * TODO: remove this once /login and /register can handle a submitted form.
- * @param {SubmitEvent} event - The form's submit event. The browser passes this in automatically.
- */
-function holdFormSubmission(event) {
-  event.preventDefault();
-}
-
-// Everything below runs once when the page loads. It connects the functions above to the page.
-document.getElementById("auth-form").addEventListener("submit", holdFormSubmission);
 
 // querySelectorAll finds every matching tag. This loop works like "for button in buttons:" in Python.
 for (const button of document.querySelectorAll("[data-password-toggle]")) {

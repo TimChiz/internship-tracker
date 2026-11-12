@@ -19,7 +19,7 @@ EMAIL_ERROR = "Enter a valid email address."
 PASSWORD_LENGTH_ERROR = "Password must be between 8 and 128 characters."
 MISMATCH_ERROR = "Passwords don't match."
 USERNAME_LENGTH_ERROR = "Your rat's name must be between 3 and 16 characters."
-USERNAME_CHARACTERS_ERROR = "Use only lowercase letters, digits and _."
+USERNAME_CHARACTERS_ERROR = "Use only letters, digits and _."
 
 
 class NormalizeEmailTest(unittest.TestCase):
@@ -95,13 +95,11 @@ class ValidateUsernameTest(unittest.TestCase):
                     validate_username(username), [USERNAME_CHARACTERS_ERROR]
                 )
 
-    def test_uppercase_is_rejected(self):
-        """Klara and klara must not be able to exist as two accounts."""
+    def test_uppercase_is_allowed(self):
+        """Capitals are fine. Klara and klara still can't both exist: claim_username checks that."""
         for username in ("Klara", "Tim_Cheese", "RAT"):
             with self.subTest(username=username):
-                self.assertEqual(
-                    validate_username(username), [USERNAME_CHARACTERS_ERROR]
-                )
+                self.assertEqual(validate_username(username), [])
 
     def test_short_name_with_bad_character_gives_both_errors(self):
         self.assertEqual(
