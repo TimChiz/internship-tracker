@@ -1,0 +1,97 @@
+/*
+ * Styles for the shared header on logged-in pages (templates/components/app_header.html).
+ * Colors and fonts come from tokens.css. The logo and day/night switch inside it are styled by header_parts.css.
+ */
+
+.app-header {
+  background: var(--rr-band-header); /* the top band: gold by day, navy by night */
+  border-bottom: 3px solid var(--rr-ink);
+  color: var(--rr-ink);
+}
+
+.app-header-row {
+  max-width: 1120px; /* same width and side padding as .page-width, so the header lines up with the page */
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* The username, in big pixel type */
+
+.app-header-name {
+  flex: 1 1 auto; /* takes the free space, pushing the rat and switch to the right */
+  min-width: 0; /* lets a very long name wrap instead of overflowing */
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 96px; /* Pixelbasel stays crisp at multiples of 16px */
+  font-weight: 400;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.app-header-name.is-long {
+  font-size: 64px; /* names over 10 characters */
+}
+
+/* The user's rat, with the number of applications they've sent beside it */
+
+.app-header-rat {
+  flex: none;
+  display: flex;
+  align-items: flex-start; /* the count sits level with the rat's head */
+  gap: 8px;
+}
+
+.app-header-rat-image {
+  display: block;
+  height: 96px;
+  width: auto;
+}
+
+.app-header-count {
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 48px;
+  line-height: 1;
+}
+
+.app-header-count-label {
+  position: absolute; /* hidden on screen, but still read out by screen readers */
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Smooth page changes: saving a form reloads the page, so the browser blends the old page into the new one
+   instead of flashing. The header keeps its own name, so it holds still while the rest of the page fades across.
+   Browsers without view transitions, like Firefox, reload as before. No JavaScript needed. */
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto; /* any page that loads this file joins in */
+  }
+}
+
+.app-header {
+  view-transition-name: app-header; /* must be unique on the page; there's one header */
+}
+
+/* Narrower windows: everything steps down a size, staying on multiples of 16px */
+
+@media (max-width: 900px) {
+  .app-header-name { font-size: 64px; }
+  .app-header-name.is-long { font-size: 48px; }
+  .app-header-rat-image { height: 64px; }
+  .app-header-count { font-size: 32px; }
+}
+
+@media (max-width: 600px) {
+  .app-header-row { gap: 12px; }
+  .app-header-name { font-size: 48px; }
+  .app-header-name.is-long { font-size: 32px; }
+  .app-header-rat-image { height: 48px; }
+}

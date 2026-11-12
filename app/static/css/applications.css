@@ -37,12 +37,7 @@ a:hover {
   white-space: nowrap;
 }
 
-/* The three stepped color bands from the design doc */
-
-.band-header {
-  background: var(--rr-band-header);
-  border-bottom: 3px solid var(--rr-ink);
-}
+/* The middle and lower color bands from the design doc. The top band is the shared header (app_header.css). */
 
 .band-middle {
   background: var(--rr-band-middle);
@@ -53,36 +48,17 @@ a:hover {
   background: var(--rr-band-lower);
 }
 
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 16px;
-  padding-bottom: 16px;
-}
-
-.wordmark {
-  margin: 0;
-  font-family: var(--rr-font-title);
-  font-size: 32px;
-  line-height: 1;
-}
-
-.username {
-  margin: 0;
-  font-weight: 700;
-}
-
 .title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding-top: 24px;
-  padding-bottom: 24px;
+  gap: 24px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .title-row h1 {
+  flex: none; /* the race track beside it takes the spare width */
   margin: 0;
   font-family: var(--rr-font-title);
   font-size: 48px;

@@ -1,0 +1,26 @@
+{# Pieces every page's header shares: the RR logo link and the day/night switch. Styled by css/header_parts.css.
+   Use them with: {% from "components/header_parts.html" import logo_link, theme_switch %} #}
+
+{# The RR logo. It is the way home, so pass the page it links to, e.g. logo_link(url_for('applications.index')). #}
+{% macro logo_link(href) %}
+<a class="rr-logo" href="{{ href }}" aria-label="Rat Race home">
+  <img src="{{ url_for('static', filename='images/rr-logo.png') }}" alt="" width="48" height="48">
+</a>
+{% endmacro %}
+
+{# The day/night switch: a pixel sun by day and a moon by night. js/theme.js finds it by its id and runs it.
+   Each icon is pixel art at 3px per pixel on a 16 x 16 grid. Its three paths are a hard shadow, an outline and a body. #}
+{% macro theme_switch() %}
+<button type="button" id="theme-toggle" class="rr-theme-toggle" aria-label="Switch to night mode">
+  <svg class="rr-icon rr-icon--sun" width="48" height="48" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+    <path class="ink" d="M6 1h4v1h-4zM4 2h8v1h-8zM3 3h10v1h-10zM2 4h12v1h-12zM2 5h12v1h-12zM1 6h14v1h-14zM1 7h14v1h-14zM1 8h14v1h-14zM1 9h14v1h-14zM2 10h12v1h-12zM2 11h12v1h-12zM3 12h10v1h-10zM4 13h8v1h-8zM6 14h4v1h-4z"/>
+    <path class="ink" d="M5 0h4v1h-4zM3 1h2v1h-2zM9 1h2v1h-2zM2 2h1v1h-1zM11 2h1v1h-1zM1 3h1v1h-1zM12 3h1v1h-1zM1 4h1v1h-1zM12 4h1v1h-1zM0 5h1v1h-1zM13 5h1v1h-1zM0 6h1v1h-1zM13 6h1v1h-1zM0 7h1v1h-1zM13 7h1v1h-1zM0 8h1v1h-1zM13 8h1v1h-1zM1 9h1v1h-1zM12 9h1v1h-1zM1 10h1v1h-1zM12 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM3 12h2v1h-2zM9 12h2v1h-2zM5 13h4v1h-4z"/>
+    <path class="body" d="M5 1h4v1h-4zM3 2h8v1h-8zM2 3h10v1h-10zM2 4h10v1h-10zM1 5h12v1h-12zM1 6h12v1h-12zM1 7h12v1h-12zM1 8h12v1h-12zM2 9h10v1h-10zM2 10h10v1h-10zM3 11h8v1h-8zM5 12h4v1h-4z"/>
+  </svg>
+  <svg class="rr-icon rr-icon--moon" width="48" height="48" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+    <path class="ink" d="M6 1h1v1h-1zM4 2h4v1h-4zM3 3h5v1h-5zM2 4h5v1h-5zM2 5h5v1h-5zM1 6h6v1h-6zM1 7h7v1h-7zM1 8h7v1h-7zM1 9h12v1h-12zM2 10h12v1h-12zM2 11h12v1h-12zM3 12h10v1h-10zM4 13h8v1h-8zM6 14h4v1h-4z"/>
+    <path class="ink" d="M5 0h1v1h-1zM3 1h2v1h-2zM6 1h1v1h-1zM2 2h1v1h-1zM6 2h1v1h-1zM1 3h1v1h-1zM5 3h1v1h-1zM1 4h1v1h-1zM5 4h1v1h-1zM0 5h1v1h-1zM5 5h1v1h-1zM0 6h1v1h-1zM6 6h1v1h-1zM0 7h1v1h-1zM6 7h1v1h-1zM0 8h1v1h-1zM7 8h5v1h-5zM1 9h1v1h-1zM12 9h1v1h-1zM1 10h1v1h-1zM12 10h1v1h-1zM2 11h1v1h-1zM11 11h1v1h-1zM3 12h2v1h-2zM9 12h2v1h-2zM5 13h4v1h-4z"/>
+    <path class="body" d="M5 1h1v1h-1zM3 2h3v1h-3zM2 3h3v1h-3zM2 4h3v1h-3zM1 5h4v1h-4zM1 6h5v1h-5zM1 7h5v1h-5zM1 8h6v1h-6zM2 9h10v1h-10zM2 10h10v1h-10zM3 11h8v1h-8zM5 12h4v1h-4z"/>
+  </svg>
+</button>
+{% endmacro %}

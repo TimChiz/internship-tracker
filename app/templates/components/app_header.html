@@ -1,0 +1,21 @@
+{# The shared header for every logged-in page: RR logo, the username in big type, the user's rat with
+   the count of applications they've sent, and the day/night switch. Styled by css/app_header.css.
+
+   Pages that extend applications/layout.html already have it. To use it on another page:
+   1. In the route, pass header=get_header_data(current_user) from app/services/header.py.
+   2. In the <head>, load js/theme.js, then css/header_parts.css and css/app_header.css.
+   3. Put {% include "components/app_header.html" %} at the top of the <body>. #}
+{% from "components/header_parts.html" import logo_link, theme_switch %}
+<header class="app-header">
+  <div class="app-header-row">
+    {{ logo_link(url_for('applications.index')) }}
+    <p class="app-header-name{% if header.username|length > 10 %} is-long{% endif %}">{{ header.username }}</p> {# long names get smaller type so they stay on one line #}
+    <div class="app-header-rat">
+      <img class="app-header-rat-image" src="{{ url_for('static', filename=header.rat_image) }}" alt="Your rat" width="173" height="143">
+      <p class="app-header-count" title="Applications sent">
+        <span class="app-header-count-label">Applications sent: </span>{{ header.sent_count }} {# the label is for screen readers only #}
+      </p>
+    </div>
+    {{ theme_switch() }}
+  </div>
+</header>

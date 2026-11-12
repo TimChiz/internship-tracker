@@ -1,26 +1,26 @@
 {# Shared page for the logged-in Applications pages: the table, the edit page and the delete confirmation.
-   The header lives here once, so the shared header (#39) only needs to change this file. #}
+   It has the shared header (#39) and the race track beside the page title. #}
 <!doctype html>
 <html lang="en" data-theme="day">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rat Race — {% block page_title %}{% endblock %}</title>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script> {# in the <head>, so night mode doesn't flash day colors first #}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header_parts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app_header.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/race_track.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/applications.css') }}">
 </head>
 <body>
-  <header class="band-header">
-    <div class="page-width header-row">
-      <p class="wordmark">Rat Race</p>
-      <p class="username">{{ current_user.username }}</p>
-    </div>
-  </header>
+  {% include "components/app_header.html" %} {# routes pass header and play_race through render_page #}
 
   <main>
     <div class="band-middle">
       <div class="page-width title-row">
         <h1>{% block heading %}{% endblock %}</h1>
+        {% include "components/race_track.html" %}
         {% block title_actions %}{% endblock %}
       </div>
     </div>

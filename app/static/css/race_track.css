@@ -1,0 +1,86 @@
+/*
+ * Styles for the race track (templates/components/race_track.html): a road with the user's rat in the red car.
+ * Adding the class is-racing to the track plays the race once. Colors come from tokens.css.
+ */
+
+.race-track {
+  position: relative;
+  flex: 1 1 auto; /* fills the space between the page title and its buttons */
+  min-width: 96px;
+  height: 56px; /* tall enough for the rat's head above the car */
+  overflow: hidden; /* the racer disappears at the track's ends */
+  --racer-start: 48px; /* where the car rests: the start of the road, with room for its speed lines behind it */
+}
+
+/* The road: two edge lines with a dashed line down the middle */
+
+.race-road {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  box-sizing: border-box;
+  height: 36px;
+  border-top: 2px solid var(--rr-ink);
+  border-bottom: 2px solid var(--rr-ink);
+  background: repeating-linear-gradient(90deg, var(--rr-ink) 0 16px, transparent 16px 32px) center / 100% 2px no-repeat; /* the dashes */
+}
+
+/* The racer: the car, with the rat tucked in behind it */
+
+.racer {
+  position: absolute;
+  left: var(--racer-start);
+  bottom: 6px; /* wheels just above the road's lower edge */
+  width: 96px;
+  height: 34px;
+}
+
+.racer-car {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 96px; /* 2px per square of the car's pixel art, so it stays crisp */
+  height: 34px;
+}
+
+.racer-rat {
+  position: absolute;
+  left: 15px; /* between the headrest and the windshield */
+  bottom: 10px; /* low enough for the car door to hide its legs */
+  width: 42px;
+  height: auto;
+  transform: scaleX(-1); /* the rat art faces left, and the car drives right */
+}
+
+.racer-speed-lines {
+  position: absolute;
+  right: calc(100% + 6px); /* trailing behind the car */
+  top: 10px;
+  width: 36px;
+  height: 14px;
+  background: /* three lines of different lengths */
+    linear-gradient(var(--rr-ink), var(--rr-ink)) right 0 top 0 / 24px 2px no-repeat,
+    linear-gradient(var(--rr-ink), var(--rr-ink)) right 6px top 6px / 30px 2px no-repeat,
+    linear-gradient(var(--rr-ink), var(--rr-ink)) right 0 top 12px / 20px 2px no-repeat;
+}
+
+/* The race: a full lap. The car sprints the whole road and off the right end, comes back in from the left
+   and pulls up at the start again. */
+
+.race-track.is-racing .racer {
+  animation: race 1200ms 300ms both; /* a short pause first, so the page has appeared */
+}
+
+@keyframes race {
+  0% { left: var(--racer-start); animation-timing-function: ease-in; } /* speeding up */
+  75% { left: 100%; } /* the long run down the road */
+  75.01% { left: -140px; animation-timing-function: ease-out; } /* off-screen, jumping to the left end, then slowing down */
+  100% { left: var(--racer-start); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .race-track.is-racing .racer {
+    animation: none; /* no movement for people who ask for less motion */
+  }
+}
