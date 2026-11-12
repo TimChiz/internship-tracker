@@ -179,6 +179,13 @@ a:hover {
   white-space: nowrap;
 }
 
+/* The name opens the edit page. Names can be long, so unlike the other links they wrap. */
+.app-table .name-link {
+  white-space: normal;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
 /* Long notes show their first two lines; the full text will be on the edit page */
 .notes {
   display: -webkit-box;
@@ -226,6 +233,48 @@ a:hover {
   color: #2B1B12;
 }
 
+/* The status menu in each row. The tag opens a list of statuses below it, inside the row,
+   so the table's sideways scroll box can't cut the list off. */
+
+.status-menu summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+/* Hide the triangle browsers add to <summary>; the tag shows its own ▾ */
+.status-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.status-options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: max-content;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--rr-panel);
+  border: 2px solid var(--rr-ink);
+  box-shadow: 3px 3px 0 var(--rr-ink);
+}
+
+.status-options .tag {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.status-options .tag:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--rr-ink);
+}
+
+/* The current status is in the list too, but greyed out since picking it would change nothing */
+.status-options .tag:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
 .tag-to_do { background: #E6DCD0; }
 .tag-in_progress { background: #CDEBE6; }
 .tag-applied { background: #D4EDC9; }
@@ -262,6 +311,7 @@ a:hover {
   border-radius: 0;
   box-shadow: 4px 4px 0 var(--rr-action-shadow);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .rr-btn:active {
@@ -423,12 +473,44 @@ textarea.rr-input {
   cursor: pointer;
 }
 
+/* The edit page and delete confirmation: one panel holding the form */
+
+.form-panel {
+  max-width: 640px;
+  padding: 24px 28px 28px;
+}
+
+.form-panel-title {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.form-panel > .muted {
+  margin: -8px 0 20px;
+}
+
+/* Delete is the one action that can't be undone, so it's red and sits apart from Save */
+.danger-link {
+  margin-left: auto;
+  color: var(--rr-urgent);
+}
+
+.danger-btn {
+  background: var(--rr-urgent);
+  /* Panel color keeps the text readable on red in both day and night mode */
+  color: var(--rr-panel);
+  box-shadow: 4px 4px 0 var(--rr-ink);
+}
+
 /* Keyboard focus, the same 3px outline as the auth pages */
 
 .rr-input:focus,
 .rr-btn:focus-visible,
 .close-btn:focus-visible,
 .link-btn:focus-visible,
+.status-options .tag:focus-visible,
 summary:focus-visible,
 a:focus-visible {
   outline: 3px solid var(--rr-ink);
