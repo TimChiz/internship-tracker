@@ -14,6 +14,9 @@
     <div class="page-width header-row">
       <p class="wordmark">Rat Race</p>
       <p class="username">{{ current_user.username }}</p>
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <button type="submit" class="logout-button">Log out</button>
+      </form>
     </div>
   </header>
 
