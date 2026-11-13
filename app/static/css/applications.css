@@ -526,3 +526,17 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+
+
+/* Log out is a form button (POST), styled like a small text link. */
+.logout-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
