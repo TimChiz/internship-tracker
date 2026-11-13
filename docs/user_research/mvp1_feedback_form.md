@@ -34,7 +34,7 @@ A few quick questions so we know who is answering.
 | 3 | Which statement best describes your current internship search? \* | Multiple choice | I am currently applying for Summer 2027 internships · I plan to apply but have not started yet · I am not applying now, but plan to in the future · I do not plan to apply for internships |
 | 4 | How do you keep track of your internship applications right now? \* | Multiple choice | A spreadsheet (Excel, Google Sheets) · A notes app or Notion · My email inbox · I don't track them · Other |
 
-**What we learn:** whether testers match our target users (undergraduates applying for internships), and which browsers to test on.
+**What we learn:** whether testers match our target users (undergraduates applying for internships).
 
 ---
 
