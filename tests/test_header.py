@@ -13,7 +13,8 @@ from app import create_app, db
 from app.models import Application, User
 from app.routes.applications import RACE_SESSION_KEY
 from app.services.auth import claim_username, register_user
-from app.services.header import DEFAULT_RAT_IMAGE, get_header_data, starts_race
+from app.services.header import get_header_data, starts_race
+from app.services.rats import DEFAULT_RAT, choose_rat, get_rat
 from app.services.stats import count_sent, was_sent
 
 SENT = datetime(2026, 11, 1)  # any time works; only "has it been sent" matters
@@ -125,15 +126,22 @@ class GetHeaderDataTest(HeaderTestCase):
     """get_header_data gathers the name, the rat picture and the count for the header."""
 
     def test_has_name_rat_and_count(self):
-        """The header gets the username, the rat picture and the sent count."""
+        """The header gets the username, the picture of the rat they picked, and the sent count."""
+        choose_rat(self.user, get_rat("tough"))
         self.save(self.user, "applied", SENT)
         self.save(self.user, "to_do")
 
         header = get_header_data(self.user)
 
         self.assertEqual(header.username, "rat_one")
-        self.assertEqual(header.rat_image, DEFAULT_RAT_IMAGE)
+        self.assertEqual(header.rat_image, "images/rats/tough.png")
         self.assertEqual(header.sent_count, 1)
+
+    def test_no_rat_picked_gets_the_default_rat(self):
+        """Someone who hasn't picked a rat, like an account made before Name Your Rat, gets the default rat."""
+        self.assertIsNone(self.user.rat)
+
+        self.assertEqual(get_header_data(self.user).rat_image, DEFAULT_RAT.image)
 
 
 class StartsRaceTest(unittest.TestCase):
@@ -261,6 +269,16 @@ class HeaderOnPageTest(HeaderTestCase):
         self.assertIn("Log out</button>", html)
         self.assertIn('id="theme-toggle"', html)
         self.assertIn('class="race-track"', html)  # resting, not racing
+
+    def test_header_and_car_show_each_users_own_rat(self):
+        """The header and the race car both show the logged-in user's rat, not another user's."""
+        choose_rat(self.user, get_rat("tough"))
+        choose_rat(self.other_user, get_rat("classic"))
+
+        html = self.table()
+
+        self.assertEqual(html.count("images/rats/tough.png"), 2)  # once in the header, once in the car
+        self.assertNotIn("images/rats/classic.png", html)
 
     def test_edit_and_delete_pages_show_the_header(self):
         """The edit page and the delete confirmation have the same header."""

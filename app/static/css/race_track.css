@@ -48,8 +48,8 @@
   position: absolute;
   left: 15px; /* between the headrest and the windshield */
   bottom: 10px; /* low enough for the car door to hide its legs */
-  width: 42px;
-  height: auto;
+  height: 35px; /* set by height, not width, so a tall rat still fits under the top of the track */
+  width: auto;
   transform: scaleX(-1); /* the rat art faces left, and the car drives right */
 }
 

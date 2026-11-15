@@ -3,9 +3,8 @@
 from dataclasses import dataclass
 
 from app.models import Application, User
+from app.services.rats import get_rat
 from app.services.stats import count_sent, was_sent
-
-DEFAULT_RAT_IMAGE = "images/rat-default.png"  # every user's rat until choosing one of 8 is built (issue #38)
 
 
 @dataclass(frozen=True)
@@ -14,7 +13,8 @@ class HeaderData:
 
     Attributes:
         username: the name shown in big type.
-        rat_image: the rat picture's path inside app/static, for url_for('static', filename=...).
+        rat_image: the picture of the rat the user picked on Name Your Rat, as a path inside app/static,
+            for url_for('static', filename=...). The race track's car uses it too.
         sent_count: the number shown beside the rat: every application the user has ever sent.
     """
 
@@ -27,7 +27,7 @@ def get_header_data(user: User) -> HeaderData:
     """Build the header for this user."""
     return HeaderData(
         username=user.username,
-        rat_image=DEFAULT_RAT_IMAGE,
+        rat_image=get_rat(user.rat).image,  # anyone who hasn't picked a rat gets the default one
         sent_count=count_sent(user),
     )
 

@@ -11,7 +11,7 @@
     {{ logo_link(url_for('applications.index')) }}
     <p class="app-header-name{% if header.username|length > 10 %} is-long{% endif %}">{{ header.username }}</p> {# long names get smaller type so they stay on one line #}
     <div class="app-header-rat">
-      <img class="app-header-rat-image" src="{{ url_for('static', filename=header.rat_image) }}" alt="Your rat" width="173" height="143">
+      <img class="app-header-rat-image" src="{{ url_for('static', filename=header.rat_image) }}" alt="Your rat"> {# the rat picked on Name Your Rat; rats differ in shape, so the CSS sets only its height #}
       <p class="app-header-count" title="Applications sent">
         <span class="app-header-count-label">Applications sent: </span>{{ header.sent_count }} {# the label is for screen readers only #}
       </p>
