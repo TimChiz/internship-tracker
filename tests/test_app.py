@@ -31,7 +31,7 @@ class CreateAppTest(unittest.TestCase):
         self.assertEqual(app.config["SQLALCHEMY_DATABASE_URI"], "sqlite://")
 
     def test_home_page_responds(self):
-        """Proves home blueprint is registered and works"""
+        """Proves home blueprint is registered: a logged-out visitor is sent to /login"""
         app = create_app({"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite://"})
 
         client = app.test_client()
@@ -39,7 +39,8 @@ class CreateAppTest(unittest.TestCase):
         #test_client() gives a fake browser and sends requests straight to the app
         # without starting a server or opening a network connection.
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.location.endswith("/login"))
 
     if __name__ == "__main__":
         unittest.main()

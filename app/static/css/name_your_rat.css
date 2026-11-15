@@ -1,0 +1,407 @@
+/*
+ * Styles for the Name Your Rat screen (templates/auth/name_your_rat.html).
+ * Colors and fonts come from tokens.css. The desert's colors, the sun/moon switch, the input and the button
+ * come from auth_design.css.
+ * This file also does the flipping: it shows only the picked rat and its pair of arrows. No JavaScript.
+ *
+ * The layout is a character select: the rat is the star, as big as the window allows, standing on a small
+ * name plaque near the bottom of the screen.
+ */
+
+/* The page: the desert fills the whole window, and the rat and plaque stand near the bottom, on the ground */
+
+.rat-page {
+  --rat-size: clamp(176px, calc(100vh - 300px), 448px); /* the rat's height: whatever the plaque leaves, up to 448px */
+  --rat-size: clamp(176px, calc(100svh - 300px), 448px); /* on phones, the height without the browser's bars */
+  position: relative;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 24px 16px clamp(56px, 10vh, 112px); /* room under the plaque for its notes */
+  display: grid;
+  place-items: end center;
+  overflow: hidden; /* crops the desert, which is wider than most windows */
+  font-family: var(--rr-font-body);
+  color: var(--rr-ink);
+  background: var(--rr-band-header); /* the sky's top color, for windows taller than the desert */
+}
+
+/* The desert is drawn at 4px per pixel (1440px wide). Wider windows get 6px or 8px per pixel, so it always
+   reaches both edges and its pixels stay crisp. */
+
+@media (min-width: 1441px) {
+  .rat-page .desert-scene { width: 2160px; height: 1440px; margin-left: -1080px; bottom: -84px; }
+}
+
+@media (min-width: 2161px) {
+  .rat-page .desert-scene { width: 2880px; height: 1920px; margin-left: -1440px; bottom: -112px; }
+}
+
+.rat-form {
+  position: relative; /* above the desert */
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The picker: arrow, rat, arrow */
+
+.rat-picker {
+  position: relative;
+  margin-bottom: -3px; /* the rat's feet rest on the plaque's top edge */
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  justify-content: center;
+  column-gap: 20px;
+}
+
+.rat-choice {
+  position: absolute; /* hidden on screen, but still there for the keyboard and screen readers */
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rat-stage {
+  grid-column: 2;
+  grid-row: 1;
+  width: min(calc(var(--rat-size) * 1.21), calc(100vw - 150px)); /* never wider than the window minus the arrows */
+  aspect-ratio: 386 / 319; /* the shape of the widest rat */
+  display: grid;
+  grid-template: 100% / 100%;
+}
+
+.rat-art {
+  grid-area: 1 / 1; /* every rat sits in the same spot; only the picked one shows */
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%; /* feet on the plaque, whatever the rat's shape */
+  transform-origin: 50% 100%; /* squashes and stretches from the feet */
+}
+
+/* Show the picked rat: the 1st radio button shows the 1st picture, and so on. There's room for all 8 rats.
+   Each time a rat is picked it drops onto the plaque with a squash, then breathes while it waits. */
+
+.rat-choice:nth-of-type(1):checked ~ .rat-stage .rat-art:nth-child(1),
+.rat-choice:nth-of-type(2):checked ~ .rat-stage .rat-art:nth-child(2),
+.rat-choice:nth-of-type(3):checked ~ .rat-stage .rat-art:nth-child(3),
+.rat-choice:nth-of-type(4):checked ~ .rat-stage .rat-art:nth-child(4),
+.rat-choice:nth-of-type(5):checked ~ .rat-stage .rat-art:nth-child(5),
+.rat-choice:nth-of-type(6):checked ~ .rat-stage .rat-art:nth-child(6),
+.rat-choice:nth-of-type(7):checked ~ .rat-stage .rat-art:nth-child(7),
+.rat-choice:nth-of-type(8):checked ~ .rat-stage .rat-art:nth-child(8) {
+  display: block;
+  animation: rat-land 380ms cubic-bezier(0.3, 0.7, 0.4, 1) both, rat-breathe 2.2s 380ms ease-in-out infinite;
+}
+
+@keyframes rat-land {
+  0% { opacity: 0; transform: translateY(-48px) scale(0.92, 1.1); } /* stretched, falling in */
+  45% { opacity: 1; transform: translateY(0) scale(1.1, 0.86); } /* squashed on landing */
+  75% { transform: scale(0.97, 1.04); } /* springs back up */
+  100% { transform: none; }
+}
+
+@keyframes rat-breathe {
+  50% { transform: scale(1.015, 0.975); }
+}
+
+/* The arrows: only the picked rat's pair shows, one on each side of the stage */
+
+.rat-arrows {
+  display: none;
+}
+
+.rat-choice:nth-of-type(1):checked ~ .rat-arrows:nth-of-type(1),
+.rat-choice:nth-of-type(2):checked ~ .rat-arrows:nth-of-type(2),
+.rat-choice:nth-of-type(3):checked ~ .rat-arrows:nth-of-type(3),
+.rat-choice:nth-of-type(4):checked ~ .rat-arrows:nth-of-type(4),
+.rat-choice:nth-of-type(5):checked ~ .rat-arrows:nth-of-type(5),
+.rat-choice:nth-of-type(6):checked ~ .rat-arrows:nth-of-type(6),
+.rat-choice:nth-of-type(7):checked ~ .rat-arrows:nth-of-type(7),
+.rat-choice:nth-of-type(8):checked ~ .rat-arrows:nth-of-type(8) {
+  display: contents; /* its two arrows take their places in the picker's grid */
+}
+
+.rat-arrow {
+  grid-row: 1;
+  padding: 24px 8px; /* a bigger area to click or tap than the arrow itself */
+  line-height: 0;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rat-arrow-previous { grid-column: 1; }
+.rat-arrow-next { grid-column: 3; transform: scaleX(-1); } /* the same arrow, mirrored */
+
+.rat-arrow-icon {
+  display: block;
+  width: 65px; /* 5px per pixel of the arrow's art */
+  height: 75px;
+  transition: transform 100ms ease-out;
+  animation: arrow-bounce 1.2s ease-in-out infinite; /* always leaning outward a little, inviting a click */
+}
+
+.rat-arrow-icon .ink { fill: var(--rr-ink); }
+.rat-arrow-icon .body { fill: var(--rr-sun); } /* sun red by day, moon gold by night */
+.rat-arrow-icon .shine { fill: #FFF6E0; }
+
+.rat-arrow:hover .rat-arrow-icon {
+  animation: none;
+  transform: translateX(-6px) scale(1.08); /* leans outward and grows */
+}
+
+.rat-arrow:active .rat-arrow-icon {
+  transform: translateX(-12px) scale(0.88); /* pressed */
+}
+
+.rat-choice:focus-visible ~ .rat-arrows .rat-arrow-icon {
+  outline: 3px solid var(--rr-ink); /* keyboard focus: the arrow keys flip rats now */
+  outline-offset: 6px;
+}
+
+@keyframes arrow-bounce {
+  50% { transform: translateX(-6px); }
+}
+
+@media (min-height: 800px) and (min-width: 900px) {
+  .rat-arrow-icon { width: 78px; height: 90px; } /* 6px per pixel beside the biggest rats */
+}
+
+/* The sun or moon: on phones it tucks into the corner, out of the rat's way */
+
+@media (max-width: 520px) {
+  .rat-page .rr-sun { top: 16px; right: 16px; }
+}
+
+/* The plaque: a small cream panel with notched pixel corners and a hard shadow, for the rat to stand on */
+
+.name-plaque {
+  --notch: polygon(
+    0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+  position: relative;
+  z-index: 1; /* above the rat, so the (i) tip opens over its feet, not behind them */
+  width: 100%;
+  max-width: 372px;
+  box-sizing: border-box;
+  padding: 12px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.name-plaque-back {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  filter: drop-shadow(6px 6px 0 var(--rr-ink)); /* the hard shadow follows the notched shape */
+}
+
+.name-plaque-back::before, /* the outline */
+.name-plaque-back::after { /* the cream face, 3px inside it */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--rr-ink);
+  clip-path: var(--notch);
+}
+
+.name-plaque-back::after {
+  inset: 3px;
+  background: var(--rr-panel);
+}
+
+.name-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.name-title {
+  margin: 0;
+  font-family: var(--rr-font-title);
+  font-size: 32px; /* Pixelbasel stays crisp at multiples of 16px */
+  line-height: 1.1;
+  font-weight: 400;
+}
+
+/* The (i) button and its tip */
+
+.name-info {
+  position: relative;
+  flex: none;
+}
+
+.info-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  cursor: help;
+}
+
+.info-button svg { width: 18px; height: 18px; } /* 2px per pixel of the icon's art */
+.info-button .ink { fill: var(--rr-ink); }
+.info-button .letter { fill: var(--rr-panel); }
+
+.info-button:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 2px;
+}
+
+.info-tip {
+  position: absolute;
+  right: -12px;
+  bottom: calc(100% + 12px);
+  z-index: 2;
+  width: max-content;
+  max-width: min(240px, 70vw);
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--rr-action-text);
+  background: var(--rr-action);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 120ms ease-out, transform 120ms ease-out, visibility 0s 120ms;
+  pointer-events: none;
+}
+
+.info-tip::after { /* a small pixel pointer down to the button */
+  content: "";
+  position: absolute;
+  right: 24px;
+  top: calc(100% + 4px);
+  width: 4px;
+  height: 4px;
+  background: var(--rr-action);
+  box-shadow: -4px -4px 0 var(--rr-action), 0 -4px 0 var(--rr-action), 4px -4px 0 var(--rr-action);
+}
+
+.name-info:hover .info-tip,
+.info-button:focus + .info-tip { /* hover with a mouse; tap or Tab to it otherwise */
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+
+/* The name box with the GO button beside it */
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.name-input {
+  height: 48px;
+  text-align: center;
+}
+
+.start-button { /* waiting: a quiet outline until the name fits the rule */
+  width: auto;
+  height: 48px;
+  padding: 0 16px;
+  color: var(--rr-ink-2);
+  background: transparent;
+  box-shadow: none;
+  transition: color 120ms ease-out, background-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.name-input:valid + .start-button { /* ready: the full primary button, with a small pop */
+  color: var(--rr-action-text);
+  background: var(--rr-action);
+  box-shadow: 4px 4px 0 var(--rr-action-shadow);
+  animation: go-pop 260ms cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.name-input:valid + .start-button:active {
+  box-shadow: none; /* presses into its shadow, like every primary button */
+}
+
+@keyframes go-pop {
+  0% { transform: scale(0.8); }
+  100% { transform: none; }
+}
+
+/* Notes under the plaque: the server's errors, and the rule while the typed name breaks it.
+   They float below the plaque, so the plaque and the rat never jump. */
+
+.name-notes {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 92vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.name-errors,
+.name-rule {
+  margin: 0;
+  padding: 4px 12px;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--rr-urgent);
+  background: var(--rr-panel);
+  border: 2px solid var(--rr-ink);
+}
+
+.name-rule {
+  display: none;
+}
+
+.name-input:not(:placeholder-shown):invalid ~ .name-notes .name-rule {
+  display: block; /* something is typed, and it breaks the rule */
+}
+
+/* Narrow windows */
+
+@media (max-width: 520px) {
+  .rat-picker { column-gap: 4px; }
+  .rat-arrow-icon { width: 39px; height: 45px; } /* 3px per pixel */
+  .name-plaque { padding: 10px 14px 16px; }
+}
+
+/* Less motion for people who ask for it: the rats swap without dropping in, and nothing bounces or pops */
+
+@media (prefers-reduced-motion: reduce) {
+  .rat-art,
+  .rat-arrow-icon,
+  .start-button {
+    animation: none !important;
+    transition: none;
+  }
+
+  .info-tip {
+    transition: none;
+    transform: none;
+  }
+}

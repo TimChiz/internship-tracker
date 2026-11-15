@@ -1,5 +1,5 @@
 {# The shared header for every logged-in page: RR logo, the username in big type, the user's rat with
-   the count of applications they've sent, and the day/night switch. Styled by css/app_header.css.
+   the count of applications they've sent, Log out, and the day/night switch. Styled by css/app_header.css.
 
    Pages that extend applications/layout.html already have it. To use it on another page:
    1. In the route, pass header=get_header_data(current_user) from app/services/header.py.
@@ -16,6 +16,9 @@
         <span class="app-header-count-label">Applications sent: </span>{{ header.sent_count }} {# the label is for screen readers only #}
       </p>
     </div>
+    <form method="post" action="{{ url_for('auth.logout') }}" class="app-header-logout"> {# a form (POST), so a link can't log anyone out by accident #}
+      <button type="submit" class="logout-button">Log out</button> {# styled in applications.css #}
+    </form>
     {{ theme_switch() }}
   </div>
 </header>

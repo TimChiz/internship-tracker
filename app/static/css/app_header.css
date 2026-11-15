@@ -35,6 +35,18 @@
   font-size: 64px; /* names over 10 characters */
 }
 
+/* Log out: the underlined text button from applications.css, sitting between the rat and the switch */
+
+.app-header-logout {
+  flex: none;
+  margin: 0;
+}
+
+.app-header-logout .logout-button:focus-visible {
+  outline: 3px solid var(--rr-ink);
+  outline-offset: 3px;
+}
+
 /* The user's rat, with the number of applications they've sent beside it */
 
 .app-header-rat {

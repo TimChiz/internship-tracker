@@ -311,3 +311,30 @@ a:focus-visible {
   outline: 3px solid var(--rr-ink);
   outline-offset: 3px;
 }
+
+
+/* The errors above a form after a wrong submit (e.g. "Email or password is incorrect."). */
+.form-errors {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--rr-urgent);
+}
+
+/* Log out is a form button (POST), styled like a small text link. */
+.logout-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.logout-form {
+  margin-top: 16px;
+  text-align: center;
+}
