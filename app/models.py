@@ -24,8 +24,11 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(16), nullable=True)
     #nullable=True because me might want to save the user details to the table after the first page (email, password) and before the second page (choose username and avatar) so an account would be usernameless <if that's a word> for that mooment
 
+    rat = db.Column(db.String(16), nullable=True)
+    #which rat they picked on the Name Your Rat page: a key from app/services/rats.py, such as "classic". empty until they pick one
+
 db.Index("ix_users_username_lower", db.func.lower(User.username), unique=True)
-#usernames must be unique, and we should save them all in lowercase. so we make a unique index 
+#usernames must be unique ignoring capitals ("Klara" and "klara" can't both exist), so we make a unique index on the lowercase version. the name itself is saved as typed
 
 _allowed_statuses = ", ". join(f" '{status}'" for status in STATUS_OPTIONS)
 

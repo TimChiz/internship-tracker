@@ -5,8 +5,16 @@ from functools import wraps
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
-from app.services.auth import authenticate, claim_username, register_user, validate_signup
+from app.services.auth import (
+    USERNAME_MAX_LENGTH,
+    USERNAME_MIN_LENGTH,
+    authenticate,
+    claim_username,
+    register_user,
+    validate_signup,
+)
 from app.services.errors import AuthError
+from app.services.rats import DEFAULT_RAT, RATS, choose_rat, get_rat
 
 auth = Blueprint("auth", __name__)
 
@@ -83,21 +91,29 @@ def logout():
 @auth.route("/name-your-rat", methods=["GET", "POST"])
 @login_required
 def name_your_rat():
-    """Show the Name Your Rat screen, and save the username when the form is sent.
+    """Show the Name Your Rat screen, and save the username and the picked rat when the form is sent.
 
     Only needs a logged-in user. Someone who already has a username goes to their applications.
     """
     if current_user.username is not None:
         return redirect(url_for("applications.index"))
 
+    page = {  # what the template needs every time it's shown
+        "rats": RATS,
+        "min_length": USERNAME_MIN_LENGTH,
+        "max_length": USERNAME_MAX_LENGTH,
+    }
     if request.method == "GET":
-        return render_template("auth/name_your_rat.html")
+        return render_template("auth/name_your_rat.html", chosen_rat=DEFAULT_RAT, **page)
 
     username = request.form.get("username", "")
+    rat = get_rat(request.form.get("rat", ""))  # an unknown pick falls back to the default rat
     errors = claim_username(current_user, username)
     if errors:
-        return show_form_again("auth/name_your_rat.html", errors, username=username)
+        # the page comes back on the rat they picked, with the name they typed
+        return show_form_again("auth/name_your_rat.html", errors, username=username, chosen_rat=rat, **page)
 
+    choose_rat(current_user, rat)
     return redirect(url_for("applications.index"))
 
 
