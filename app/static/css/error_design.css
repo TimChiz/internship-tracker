@@ -1,6 +1,7 @@
 /*
  * Styles for the error page, which shows "<code> <message>" for every HTTP error.
- * Colors and fonts come from tokens.css. The design is in the error page handoff from the design team.
+ * Colors and fonts come from tokens.css, and the logo and day/night switch are styled by header_parts.css.
+ * The design is in the error page handoff from the design team.
  */
 
 *, *::before, *::after {
@@ -39,59 +40,6 @@ body {
   justify-content: space-between;
   background: var(--rr-band-header);
   border-bottom: 2px solid var(--rr-ink);
-}
-
-.rr-logo {
-  display: block;
-  flex: none;
-  width: 48px;
-  height: 48px;
-  border-radius: 6px;
-}
-
-.rr-logo img {
-  display: block;
-  width: 48px;
-  height: 48px;
-  border: 2px solid var(--rr-ink);
-  border-radius: 6px;
-  box-shadow: 3px 3px 0 var(--rr-ink); /* Hard shadow, no blur */
-}
-
-.rr-theme-toggle {
-  flex: none;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.rr-icon {
-  display: block;
-}
-
-.rr-icon .ink {
-  fill: var(--rr-ink);
-}
-
-.rr-icon .body {
-  fill: var(--rr-sun);
-}
-
-[data-theme="day"] .rr-icon--moon,
-[data-theme="night"] .rr-icon--sun {
-  display: none;
-}
-
-.rr-logo:focus-visible,
-.rr-theme-toggle:focus-visible {
-  outline: 3px solid var(--rr-ink);
-  outline-offset: 4px;
 }
 
 .rr-main {
