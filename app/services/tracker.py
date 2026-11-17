@@ -92,7 +92,7 @@ def change_application_status(
     application.status = new_status
 
 
-def create_application(
+def create_application_quick_add(
     user_id: int, quick_add_text: str, current_time: datetime
 ) -> Application:
     """Parse and save a new to-do application for a user."""

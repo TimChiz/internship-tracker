@@ -1,7 +1,7 @@
 """Routes for the Applications pages: the table and the Add popup (issue #29),
 the status menu on each row, and the edit page and delete confirmation (issue #40)."""
 
-from flask import Blueprint, abort, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for, session
 from flask_login import current_user
 
 from app.clock import app_now
@@ -17,6 +17,7 @@ from app.services.applications import (
     validate_application_form,
 )
 from app.services.errors import NotFoundError
+from app.services.tracker import create_application_quick_add
 from app.services.header import get_header_data, starts_race
 from app.services.stats import was_sent
 from app.services.tracker import delete_application, update_application_status
@@ -86,6 +87,21 @@ def new():
     application = create_application(current_user, values)
     race_if_just_sent(False, application)  # a new application hasn't been sent before
     # Redirecting (instead of rendering) means refreshing the page won't add it twice
+    return redirect(url_for("applications.index"))
+
+@applications.route("/applications/quick-add", methods=["POST"])
+@username_required
+def quick_add():
+    """Save an application from the one-line quick-add box, then go back to the table."""
+    try:
+        # The service parses the text ("Stripe – SWE Intern" or a link) and saves it as To do.
+        # The route asks the clock and passes the time in, like every service call.
+        create_application_quick_add(current_user.id, request.form.get("entry", ""), app_now())
+    except ValueError as error:
+        # Blank text: the service raises ValueError with a message for the user,
+        # e.g. "Type a company and role". flash() keeps it until the next page shows it.
+        flash(str(error))
+    # Redirect either way, so refreshing the page doesn't send the form again.
     return redirect(url_for("applications.index"))
 
 
