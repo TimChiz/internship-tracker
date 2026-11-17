@@ -1,0 +1,70 @@
+{# The fields of one application, shared by the Add popup and the edit page so they never drift apart.
+   form_values: what to show in each field (what the user typed, or the saved application).
+   form_errors: one message per field that has a problem, e.g. {"company": "Add a company."}.
+   status_options: (value, label) pairs for the Status dropdown. #}
+
+{# The error under a form field, if it has one. #}
+{% macro field_error(form_errors, name) %}
+{% if form_errors[name] %}<p id="{{ name }}-error" class="field-error">{{ form_errors[name] }}</p>{% endif %}
+{% endmacro %}
+
+{# aria attributes that tie a field to its error, so screen readers read the error with the field. #}
+{% macro error_attributes(form_errors, name) %}
+{% if form_errors[name] %}aria-invalid="true" aria-describedby="{{ name }}-error"{% endif %}
+{% endmacro %}
+
+{# autofocus: put the cursor in Company when the form appears (the Add popup does this).
+   notes_rows: how tall the Notes box starts. The edit page uses a taller one, since notes grow over time. #}
+{% macro application_fields(form_values, form_errors, status_options, autofocus=false, notes_rows=3) %}
+<div class="field">
+  <label for="company">Company <span aria-hidden="true">*</span></label>
+  <input id="company" name="company" class="rr-input" required maxlength="120" {% if autofocus %}autofocus{% endif %}
+         value="{{ form_values.get('company', '') }}" {{ error_attributes(form_errors, 'company') }}>
+  {{ field_error(form_errors, "company") }}
+</div>
+
+<div class="field">
+  <label for="role">Role <span aria-hidden="true">*</span></label>
+  <input id="role" name="role" class="rr-input" required maxlength="120"
+         value="{{ form_values.get('role', '') }}" {{ error_attributes(form_errors, 'role') }}>
+  {{ field_error(form_errors, "role") }}
+</div>
+
+<div class="field">
+  <label for="url">Link</label>
+  <input id="url" name="url" type="url" class="rr-input" maxlength="2048" placeholder="https://"
+         value="{{ form_values.get('url', '') }}" {{ error_attributes(form_errors, 'url') }}>
+  {{ field_error(form_errors, "url") }}
+</div>
+
+<div class="field-row">
+  <div class="field">
+    <label for="status">Status</label>
+    <select id="status" name="status" class="rr-input" {{ error_attributes(form_errors, 'status') }}>
+      {% for value, label in status_options %}
+      <option value="{{ value }}" {% if form_values.get('status', 'to_do') == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    {{ field_error(form_errors, "status") }}
+  </div>
+
+  <div class="field">
+    <label for="deadline">Deadline</label>
+    <input id="deadline" name="deadline" type="date" class="rr-input"
+           value="{{ form_values.get('deadline', '') }}" {{ error_attributes(form_errors, 'deadline') }}>
+    {{ field_error(form_errors, "deadline") }}
+  </div>
+</div>
+
+<label class="checkbox">
+  <input type="checkbox" name="is_rolling" {% if 'is_rolling' in form_values %}checked{% endif %}>
+  Rolling deadline
+</label>
+
+<div class="field">
+  <label for="notes">Notes</label>
+  <textarea id="notes" name="notes" class="rr-input" rows="{{ notes_rows }}">{{ form_values.get('notes', '') }}</textarea>
+</div>
+
+<p class="required-note"><span aria-hidden="true">*</span> Required</p>
+{% endmacro %}

@@ -1,0 +1,32 @@
+{# One error page for every HTTP error. It shows "<code> <message>" and a Back to home link. The logo links home too. #}
+{% from "components/header_parts.html" import logo_link, theme_switch %}
+<!doctype html>
+<html lang="en" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ code }} {{ message }} · Rat Race</title>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header_parts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/error_design.css') }}">
+</head>
+<body>
+  <div class="rr-error">
+    <header class="rr-header">
+      {{ logo_link(url_for('home.index')) }}
+      {{ theme_switch() }}
+    </header>
+
+    <main class="rr-main">
+      <section class="rr-band--middle">
+        <h1 class="rr-code">{{ code }}</h1>
+      </section>
+      <section class="rr-band--lower">
+        <p class="rr-message">{{ message }}</p>
+        <a class="rr-home-link" href="{{ url_for('home.index') }}">Back to home</a>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
