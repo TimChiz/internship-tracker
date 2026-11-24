@@ -77,3 +77,33 @@ class Application(db.Model):
         # row. The leaderboard runs exactly that query.
         db.Index("ix_applications_user_applied", "user_id", "applied_at"),
     )
+
+class FriendRequest(db.Model):
+    """
+    Friends requests (from one user to another)
+
+    default status - pending (until the request is accepted or declined)
+    declining (or cancelling) a friend request deletes the row (the person can be asked again to be friends later)
+    """
+    __tablename__ = "friend_requests"
+
+    id =  db.Column(db.Integer, primary_key = True)
+    from_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    to_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    status = db.Column(db.String(10), nullable=False, default="pending")
+    created_at = db.Column(db.DateTime, nullable=False, default=app_now)
+    responded_at = db.Column(db.DateTime, nullable=True)
+
+    __table_args__ = (
+        db.CheckConstraint(
+            "status IN ('pending', 'accepted')", name="ck_friend_requests_status"
+            ),
+        db.CheckConstraint(
+            "from_user_id <> to_user_id", name="ck_cannot_add_yourself"
+            ), #can't send a friend request to yourself
+        db.UniqueConstraint(
+            "from_user_id", "to_user_id", name="uq_friend_requests_pair"
+        ), #we want not more than one request from user A to user B aka you can't send two invites if the first one is pending/accepted
+        db.Index("ix_my_incoming_pending_requests", "to_user_id", "status"),
+        #speeds up the search of "my incoming pending requests" (where user_id=me and status=pending)
+    )
