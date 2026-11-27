@@ -26,7 +26,7 @@ class FriendRepository:
 
 
     @staticmethod
-    def get_friend_ids(user_id: int):
+    def get_friend_ids(user_id):
         """
         Return the ids of this user's friends (accepted)
         """
@@ -46,3 +46,24 @@ class FriendRepository:
             else:
                 friend_ids.append(request.from_user_id)
         return friend_ids
+    
+    @staticmethod
+    def get_request(request_id) -> FriendRequest | None:
+        """
+        Returns a request with the given request_id, or None if it doesn't exist
+        """
+        return FriendRequest.query.filter_by(id=request_id).first()
+
+    @staticmethod
+    def add(request: FriendRequest) -> None:
+        """
+        Stages a new request to be saved in the DB (it will then committed in DB in the service)
+        """
+        db.session.add(request)
+    
+    @staticmethod
+    def delete(request: FriendRequest) -> None:
+        """
+        Stages a request to be deleted from the DB (for example when someone rejects your invitation); (it will then committed in DB in the service)
+        """
+        db.session.delete(request)

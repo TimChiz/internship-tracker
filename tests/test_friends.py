@@ -1,14 +1,21 @@
-#Tests for the friend_requests table and FriendRepository
 import unittest
-
+from datetime import datetime
 from sqlalchemy.exc import IntegrityError
-
 from app import create_app, db
 from app.models import FriendRequest, User
 from app.repositories.friends import FriendRepository
+from app.services.errors import NotFoundError
+from app.services.friends import (
+    accept_request,
+    cancel_or_decline_request,
+    remove_friend,
+    send_friend_request,
+)
 
-class FriendRepositoryTest(unittest.TestCase):
-    """The friend_requests table rules and the two repository queries."""
+NOW = datetime(2026, 11, 27, 12, 0)
+
+class FriendsTest(unittest.TestCase):
+    """The friend_requests table, FriendRepository, and the friend services."""
 
     def setUp(self):
         """Runs before EVERY test: a new app with an empty in-memory database."""
@@ -159,7 +166,190 @@ class FriendRepositoryTest(unittest.TestCase):
 
         with self.assertRaises(IntegrityError):
             db.session.commit()
+    
+    # --- send_friend_request ---
 
+    def test_send_by_username_creates_a_pending_request(self):
+        message = send_friend_request(self.klara, "litong", NOW)
 
+        request = FriendRepository.get_request_between_users(self.klara.id, self.litong.id)
+        self.assertEqual(message, "Request sent to litong.")
+        self.assertEqual(request.from_user_id, self.klara.id)   # Klara is the sender
+        self.assertEqual(request.to_user_id, self.litong.id)
+        self.assertEqual(request.status, "pending")
+        self.assertEqual(request.created_at, NOW)               # the time we passed in
+
+    def test_send_by_email(self):
+        send_friend_request(self.klara, "litong@example.com", NOW)
+
+        self.assertIsNotNone(
+            FriendRepository.get_request_between_users(self.klara.id, self.litong.id)
+        )
+
+    def test_send_ignores_spaces_and_capitals(self):
+        # People type "  Litong " or "Litong@Example.com"; both should still work.
+        send_friend_request(self.klara, "  Litong ", NOW)
+        send_friend_request(self.klara, "Ahmed@Example.com", NOW)
+
+        self.assertIsNotNone(
+            FriendRepository.get_request_between_users(self.klara.id, self.litong.id)
+        )
+        self.assertIsNotNone(
+            FriendRepository.get_request_between_users(self.klara.id, self.ahmed.id)
+        )
+
+    def test_send_to_an_unknown_user_fails_and_saves_nothing(self):
+        # assertRaisesRegex checks the error type AND that the message contains this text.
+        with self.assertRaisesRegex(ValueError, "No rat with that username or email"):
+            send_friend_request(self.klara, "nobody", NOW)
+
+        self.assertEqual(FriendRequest.query.count(), 0)
+
+    def test_cannot_add_yourself(self):
+        with self.assertRaisesRegex(ValueError, "You can't add yourself"):
+            send_friend_request(self.klara, "klara", NOW)
+
+        self.assertEqual(FriendRequest.query.count(), 0)
+
+    def test_user_without_a_username_is_not_found(self):
+        # Signed up, but hasn't named their rat yet, so they can't be on the leaderboard.
+        nameless = User(email="nameless@example.com", password_hash="not-a-real-hash")
+        db.session.add(nameless)
+        db.session.commit()
+
+        with self.assertRaisesRegex(ValueError, "No rat with that username or email"):
+            send_friend_request(self.klara, "nameless@example.com", NOW)
+
+    def test_cannot_send_the_same_request_twice(self):
+        send_friend_request(self.klara, "litong", NOW)
+
+        with self.assertRaisesRegex(ValueError, "already sent"):
+            send_friend_request(self.klara, "litong", NOW)
+
+        self.assertEqual(FriendRequest.query.count(), 1)
+
+    def test_cannot_send_a_request_to_a_friend(self):
+        self.add_request(self.klara, self.litong, "accepted")
+
+        with self.assertRaisesRegex(ValueError, "already friends"):
+            send_friend_request(self.klara, "litong", NOW)
+
+    def test_sending_to_someone_who_already_asked_you_makes_you_friends(self):
+        # Ahmed asked Klara. Klara doesn't see it and types "ahmed" herself.
+        self.add_request(self.ahmed, self.klara, "pending")
+
+        message = send_friend_request(self.klara, "ahmed", NOW)
+
+        request = FriendRepository.get_request_between_users(self.klara.id, self.ahmed.id)
+        self.assertEqual(message, "You're now friends with ahmed!")
+        self.assertEqual(request.status, "accepted")
+        self.assertEqual(request.responded_at, NOW)
+        # Still ONE row: Ahmed's request was accepted, no second one was created.
+        self.assertEqual(FriendRequest.query.count(), 1)
+
+        # --- accept_request ---
+
+    def test_the_recipient_can_accept(self):
+        request = self.add_request(self.litong, self.klara)   # Litong asked Klara
+
+        accept_request(self.klara, request.id, NOW)
+
+        self.assertEqual(request.status, "accepted")
+        self.assertEqual(request.responded_at, NOW)
+        self.assertEqual(FriendRepository.get_friend_ids(self.klara.id), [self.litong.id])
+
+    def test_the_sender_cannot_accept_their_own_request(self):
+        # Otherwise anyone could make anyone their friend.
+        request = self.add_request(self.klara, self.litong)
+
+        with self.assertRaises(NotFoundError):
+            accept_request(self.klara, request.id, NOW)
+
+        self.assertEqual(request.status, "pending")
+
+    def test_a_stranger_cannot_accept(self):
+        request = self.add_request(self.klara, self.litong)
+
+        with self.assertRaises(NotFoundError):
+            accept_request(self.noku, request.id, NOW)
+
+    def test_accepting_a_request_that_does_not_exist(self):
+        with self.assertRaises(NotFoundError):
+            accept_request(self.klara, 999, NOW)
+
+    def test_cannot_accept_twice(self):
+        request = self.add_request(self.litong, self.klara, "accepted")
+
+        with self.assertRaises(NotFoundError):
+            accept_request(self.klara, request.id, NOW)
+
+    # --- cancel_or_decline_request ---
+
+    def test_the_sender_can_cancel(self):
+        request = self.add_request(self.klara, self.litong)
+        # Save the id BEFORE deleting: afterwards the object is gone,
+        # and reading request.id would raise an error.
+        request_id = request.id
+
+        cancel_or_decline_request(self.klara, request_id)
+
+        self.assertIsNone(FriendRepository.get_request(request_id))
+
+    def test_the_recipient_can_decline(self):
+        request = self.add_request(self.klara, self.litong)
+        request_id = request.id
+
+        cancel_or_decline_request(self.litong, request_id)
+
+        self.assertIsNone(FriendRepository.get_request(request_id))
+
+    def test_a_stranger_cannot_cancel_or_decline(self):
+        request = self.add_request(self.klara, self.litong)
+        request_id = request.id
+
+        with self.assertRaises(NotFoundError):
+            cancel_or_decline_request(self.noku, request_id)
+
+        self.assertIsNotNone(FriendRepository.get_request(request_id))   # still there
+
+    def test_declining_does_not_remove_a_friendship(self):
+        # An accepted request is a friendship, so it's removed with remove_friend, not here.
+        request = self.add_request(self.klara, self.litong, "accepted")
+
+        with self.assertRaises(NotFoundError):
+            cancel_or_decline_request(self.litong, request.id)
+
+    def test_after_declining_you_can_be_asked_again(self):
+        # There's no "declined" status left behind, so a new request works.
+        request = self.add_request(self.klara, self.litong)
+        cancel_or_decline_request(self.litong, request.id)
+
+        send_friend_request(self.klara, "litong", NOW)
+
+        self.assertEqual(FriendRequest.query.count(), 1)
+    
+    # --- remove_friend ---
+
+    def test_either_friend_can_remove_the_other(self):
+        # Klara asked, Litong accepted, and now LITONG removes Klara:
+        # it must work from the side that didn't send the request too.
+        self.add_request(self.klara, self.litong, "accepted")
+
+        remove_friend(self.litong, self.klara.id)
+
+        self.assertEqual(FriendRepository.get_friend_ids(self.klara.id), [])
+        self.assertEqual(FriendRepository.get_friend_ids(self.litong.id), [])
+
+    def test_cannot_remove_someone_who_is_not_a_friend(self):
+        with self.assertRaises(NotFoundError):
+            remove_friend(self.klara, self.noku.id)
+
+    def test_cannot_remove_a_pending_request_as_a_friend(self):
+        # A pending request isn't a friendship yet: use cancel_or_decline_request.
+        self.add_request(self.klara, self.litong)
+
+        with self.assertRaises(NotFoundError):
+            remove_friend(self.klara, self.litong.id)
+            
 if __name__ == "__main__":
     unittest.main()
