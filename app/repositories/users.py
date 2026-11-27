@@ -32,3 +32,4 @@ class UserRepository:
 def add_user(user: User) -> None:
     """Add a new user to the session. Does not commit."""
     db.session.add(user)
+    
